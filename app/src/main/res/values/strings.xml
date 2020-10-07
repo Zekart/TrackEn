@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">TrackEn</string>
+
+    // List of TabLayout item title name
+    <string-array name="tab_item_title">
+        <item>Заправки</item>
+        <item>Статистика</item>
+    </string-array>
+</resources>

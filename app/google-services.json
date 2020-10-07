@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "956560943910",
+    "firebase_url": "https://trackenstest-ee0f0.firebaseio.com",
+    "project_id": "trackenstest-ee0f0",
+    "storage_bucket": "trackenstest-ee0f0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:956560943910:android:0467c56a68852e30c62fe7",
+        "android_client_info": {
+          "package_name": "com.zekart.tracken"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "956560943910-pkn0quaa1cjd4umsrejfa01tciugs4b7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC8kat6Nn3fDGOOb1OP1pxQ0N2EQieI11E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "956560943910-pkn0quaa1cjd4umsrejfa01tciugs4b7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
