@@ -7,6 +7,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.zekart.tracken.R
 import com.zekart.tracken.adapter.ViewPagerAdapter
 import com.zekart.tracken.databinding.ActivityMainBinding
+
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main.view.*
 

@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.zekart.tracken.R
 import com.zekart.tracken.databinding.FragmentGasStationStatisticsBinding
-import com.zekart.tracken.ui.activity.EditGasStationActivity
+import com.zekart.tracken.ui.activity.GasStationActivity
 import kotlinx.android.synthetic.main.fragment_gas_station_list.view.*
 
 class GasStationListFragment: Fragment() {
@@ -36,7 +36,7 @@ class GasStationListFragment: Fragment() {
     }
 
     var onFloatButtonClick : View.OnClickListener = View.OnClickListener {
-        val intent = Intent(activity, EditGasStationActivity::class.java)
+        val intent = Intent(activity, GasStationActivity::class.java)
         startActivity(intent)
     }
 }

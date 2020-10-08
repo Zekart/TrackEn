@@ -1,10 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">TrackEn</string>
+    <string name="concern_name">Concern</string>
+    <string name="fuel_type">Fuel type</string>
+    <string name="tank_up">Tank up (l)</string>
+    <string name="tank_up_price">Price ($)</string>
+    <string name="menu_item_save">Сохранить</string>
+    <string name="menu_item_delete">delete</string>
 
     // List of TabLayout item title name
     <string-array name="tab_item_title">
         <item>Gas station</item>
         <item>Statistic</item>
+    </string-array>
+
+    <string-array name="fuel_type_array">
+        <item>Diesel</item>
+        <item>Gasoline</item>
+        <item>Gas</item>
     </string-array>
 </resources>
