@@ -11,5 +11,5 @@ data class GasStation (
     @ColumnInfo(name = "station_id")
     val mId:Int,
     @Embedded
-    val mAddress: Address
+    val mPositionInfo: PositionInfo
 )

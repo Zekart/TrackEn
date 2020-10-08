@@ -2,7 +2,7 @@ package com.zekart.tracken.model.entity
 
 import androidx.room.ColumnInfo
 
-data class Address(
+data class PositionInfo(
     @ColumnInfo(name = "address_info")
     val mAddressInfo:String,
     @ColumnInfo(name = "lat")

@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.zekart.tracken.R
+import com.zekart.tracken.model.entity.ConcernGasStation
 import com.zekart.tracken.model.entity.GasStation
 
 
@@ -27,7 +28,7 @@ class GasStationListAdapter(context: Context):
 
     override fun onBindViewHolder(holder: SelfRecyclerViewHolder, position: Int) {
         holder.txtCounter.text = position.toString()
-        holder.txtStationAddress.text = mListGasStation[position].mAddress.toString()
+        holder.txtStationAddress.text = mListGasStation[position].mPositionInfo.toString()
     }
 
     class SelfRecyclerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -36,8 +37,8 @@ class GasStationListAdapter(context: Context):
         val txtStationAddress:TextView = itemView.findViewById(R.id.tx_view_gas_station_address)
     }
 
-    internal fun setStation(station: List<GasStation>){
-        this.mListGasStation = station
+    internal fun setStation(station: List<ConcernGasStation>){
+        //this.mListGasStation = station
         notifyDataSetChanged()
     }
 }

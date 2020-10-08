@@ -18,6 +18,9 @@ interface GasStationDao {
         @Query("SELECT * FROM gas_stations WHERE station_id = :id")
         fun getStation(id:Int)
 
+//        @Query("SELECT * FROM gas_stations WHERE station_id = :station")
+//        fun updateStationn(station: GasStation)
+
         @Query("DELETE FROM gas_stations WHERE station_id = :id")
         fun deleteGasStation(id:Int);
 }

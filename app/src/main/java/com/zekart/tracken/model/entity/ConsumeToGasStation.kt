@@ -3,7 +3,7 @@ package com.zekart.tracken.model.entity
 import androidx.room.Embedded
 import androidx.room.Relation
 
-data class GasStationConsume (
+data class ConsumeToGasStation (
     @Embedded
     val mGasStation:GasStation,
     @Relation(

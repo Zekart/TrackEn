@@ -11,6 +11,8 @@ import com.zekart.tracken.databinding.ActivityMainBinding
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main.view.*
 
+//TODO init permission requests
+
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 

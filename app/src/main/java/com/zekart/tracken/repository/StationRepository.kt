@@ -21,11 +21,14 @@ class StationRepository(private val stationDao: GasStationDao){
         stationDao.insertGasStation(station)
     }
 
+    //TODO update method
+//    suspend fun update(station: GasStation){
+//        stationDao.deleteGasStation(idStation)
+//    }
+
     suspend fun delete(idStation:Int){
         stationDao.deleteGasStation(idStation)
     }
 
     suspend fun getAllStation() = mAllGasStation
-
-
 }
