@@ -10,6 +10,8 @@ data class GasStation (
     @PrimaryKey
     @ColumnInfo(name = "station_id")
     val mId:Int,
+    @ColumnInfo(name = "concern")
+    val mStationConcernName:String,
     @Embedded
     val mPositionInfo: PositionInfo
 )

@@ -6,13 +6,12 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.zekart.tracken.model.dao.GasStationDao
-import com.zekart.tracken.model.entity.Concern
 import com.zekart.tracken.model.entity.Consume
 import com.zekart.tracken.model.entity.GasStation
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-@Database(entities = [Concern::class, GasStation::class, Consume::class],version = 1)
+@Database(entities = [GasStation::class, Consume::class],version = 1)
 abstract class GasStationDataBase : RoomDatabase() {
 
     abstract fun stationDao():GasStationDao

@@ -6,7 +6,8 @@
     <string name="tank_up">Tank up (l)</string>
     <string name="tank_up_price">Price ($)</string>
     <string name="menu_item_save">Сохранить</string>
-    <string name="menu_item_delete">delete</string>
+    <string name="menu_item_delete">Delete</string>
+    <string name="menu_item_edit">Редактировать</string>
 
     // List of TabLayout item title name
     <string-array name="tab_item_title">

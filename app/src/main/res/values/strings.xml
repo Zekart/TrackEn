@@ -5,7 +5,9 @@
     <string name="tank_up">Заправленно (л)</string>
     <string name="tank_up_price">Сумма ($)</string>
     <string name="menu_item_save">Сохранить</string>
-    <string name="menu_item_delete">delete</string>
+    <string name="menu_item_delete">Удалить</string>
+    <string name="menu_item_edit">Редактировать</string>
+    <string name="empty_value_message">"Station wasn`t found. Please, add station "</string>
 
     // List of TabLayout item title name
     <string-array name="tab_item_title">
