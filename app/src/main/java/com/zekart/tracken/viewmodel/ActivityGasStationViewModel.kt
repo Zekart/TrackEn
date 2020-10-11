@@ -93,7 +93,7 @@ class ActivityGasStationViewModel(application: Application):AndroidViewModel(app
         val typeFuel = mFuelType.value
         val consumeCost = mCostConsume.value
 
-        return Consume( tempId,typeFuel,consumeCount,consumeCost)
+        return Consume( 0,typeFuel,consumeCount,consumeCost)
     }
 
     fun setCurrentStation(current:GasStation){

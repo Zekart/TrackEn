@@ -30,8 +30,6 @@ class GasStationStatisticFragment :Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        viewModel = ViewModelProvider(requireActivity()).get(FragmentStatisticViewModel::class.java)
-
         initRecyclerViewStatistics()
 
         viewModel.getAllConsumeList().observe(viewLifecycleOwner, Observer {
@@ -41,6 +39,7 @@ class GasStationStatisticFragment :Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        viewModel = ViewModelProvider(requireActivity()).get(FragmentStatisticViewModel::class.java)
         setHasOptionsMenu(false)
     }
 
