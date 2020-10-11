@@ -8,7 +8,8 @@ data class ConsumeToGasStation (
     val mGasStation:GasStation,
     @Relation(
         parentColumn = "station_id",
-        entityColumn = "consume_id"
+        entityColumn = "owner_station",
+        entity = Consume::class
     )
     val mConsumeFromGasStationLists: List<Consume>
 )

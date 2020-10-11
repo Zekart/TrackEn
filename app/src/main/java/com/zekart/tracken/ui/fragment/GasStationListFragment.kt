@@ -1,10 +1,9 @@
 package com.zekart.tracken.ui.fragment
 
 import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
@@ -12,16 +11,17 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.zekart.tracken.R
 import com.zekart.tracken.adapter.GasStationListAdapter
+import com.zekart.tracken.databinding.ActivityGasStationBinding
+import com.zekart.tracken.databinding.FragmentGasStationListBinding
 import com.zekart.tracken.databinding.FragmentGasStationStatisticsBinding
-import com.zekart.tracken.utils.Enums
 import com.zekart.tracken.ui.activity.GasStationActivity
-import com.zekart.tracken.ui.contracts.GasStationAdapterListener
+import com.zekart.tracken.ui.listeners.GasStationAdapterListener
 import com.zekart.tracken.utils.Constans
 import com.zekart.tracken.viewmodel.FragmentStationListViewModel
 import kotlinx.android.synthetic.main.fragment_gas_station_list.view.*
 
 class GasStationListFragment: Fragment(), GasStationAdapterListener,LifecycleOwner {
-    private var binding: FragmentGasStationStatisticsBinding? = null
+    private var binding: FragmentGasStationListBinding? = null
     private var adapterRecyclerView: GasStationListAdapter? = null
     private lateinit var viewModel:FragmentStationListViewModel
 
@@ -31,18 +31,17 @@ class GasStationListFragment: Fragment(), GasStationAdapterListener,LifecycleOwn
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_gas_station_list, container, false)
+        binding = FragmentGasStationListBinding.inflate(inflater,container,false)
+        return binding?.root
+        //return inflater.inflate(R.layout.fragment_gas_station_list, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        binding = FragmentGasStationStatisticsBinding.bind(view)
-        binding?.root?.floatingActionButton?.setOnClickListener(onFloatButtonClick)
-
-        viewModel = ViewModelProvider(this).get(FragmentStationListViewModel::class.java)
+        viewModel = ViewModelProvider(requireActivity()).get(FragmentStationListViewModel::class.java)
 
         initRecyclerViewStationList()
 
-        viewModel.getStationList()?.observe(viewLifecycleOwner, Observer {
+        viewModel.getStationList().observe(viewLifecycleOwner, Observer {
             if (it.isEmpty()){
                 view.message_empty_list_station_view.visibility = View.VISIBLE
             }else{
@@ -52,12 +51,28 @@ class GasStationListFragment: Fragment(), GasStationAdapterListener,LifecycleOwn
         })
     }
 
-    override fun onGasStationClick(id_station: Int) {
-        onCreateStationActivity(id_station)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
     }
 
-    private var onFloatButtonClick : View.OnClickListener = View.OnClickListener {
-        onCreateStationActivity(null)
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_list_fragment, menu);
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.menu_item_add_new_station ->{
+                onCreateStationActivity(null)
+            }
+        }
+        return true
+    }
+
+    override fun onGasStationClick(id_station: Int?) {
+        onCreateStationActivity(id_station)
     }
 
     private fun initRecyclerViewStationList(){

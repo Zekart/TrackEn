@@ -6,12 +6,13 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "gas_stations")
-data class GasStation (
-    @PrimaryKey
-    @ColumnInfo(name = "station_id")
-    val mId:Int,
-    @ColumnInfo(name = "concern")
-    val mStationConcernName:String,
+data class GasStation  (
+    @ColumnInfo(name = "station_owner")
+    val mOwner:String,
     @Embedded
-    val mPositionInfo: PositionInfo
-)
+    val mPositionInfo: PositionInfo?
+){
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "station_id")
+    var id: Int? = null
+}

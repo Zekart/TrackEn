@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.zekart.tracken.R
 import com.zekart.tracken.model.entity.GasStation
-import com.zekart.tracken.ui.contracts.GasStationAdapterListener
+import com.zekart.tracken.ui.listeners.GasStationAdapterListener
 
 
 class GasStationListAdapter(context: Context, listener: GasStationAdapterListener):
@@ -28,7 +28,7 @@ class GasStationListAdapter(context: Context, listener: GasStationAdapterListene
             parent,
             false
         )
-        return SelfRecyclerViewHolder(rootView);
+        return SelfRecyclerViewHolder(rootView)
     }
 
     override fun getItemCount(): Int {
@@ -36,11 +36,12 @@ class GasStationListAdapter(context: Context, listener: GasStationAdapterListene
     }
 
     override fun onBindViewHolder(holder: SelfRecyclerViewHolder, position: Int) {
-        holder.txtCounter.text = position.toString()
-        holder.txtStationAddress.text = mListGasStation[position].mPositionInfo.toString()
-
+        val increment = position + 1
+        holder.txtCounter.text = increment.toString()
+        holder.txtStationName.text = mListGasStation[position].mOwner
+        holder.txtStationAddress.text = mListGasStation[position].mPositionInfo?.mAddressInfo
         holder.itemView.setOnClickListener {
-            mStationAdapterListener?.onGasStationClick(mListGasStation[position].mId)
+            mStationAdapterListener?.onGasStationClick(mListGasStation[position].id)
         }
     }
 

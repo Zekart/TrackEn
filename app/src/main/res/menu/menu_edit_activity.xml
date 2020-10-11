@@ -3,15 +3,17 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/menu_item_save_gas_station"
-        android:icon="@android:drawable/ic_menu_save"
-        android:title="@string/menu_item_save"
-        app:showAsAction="ifRoom" />
+        android:id="@+id/menu_item_add_consume"
+        android:icon="@drawable/ic_add_gas_consume"
+        android:title="@string/btn_consume_fuel"
+        app:showAsAction="always" />
     <group android:id="@+id/menu_edit_group">
         <item
+            android:id="@+id/menu_item_change_gas_station"
             android:icon="@android:drawable/ic_menu_edit"
             android:title="@string/menu_item_edit" />
         <item
+            android:id="@+id/menu_item_delete_gas_station"
             android:icon="@android:drawable/ic_menu_delete"
             android:title="@string/menu_item_delete" />
     </group>

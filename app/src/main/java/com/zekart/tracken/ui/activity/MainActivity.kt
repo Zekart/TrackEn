@@ -1,15 +1,16 @@
 package com.zekart.tracken.ui.activity
 
-import androidx.appcompat.app.AppCompatActivity
+import android.app.Activity
 import android.os.Bundle
-import com.google.android.material.tabs.TabLayout
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentActivity
 import com.google.android.material.tabs.TabLayoutMediator
 import com.zekart.tracken.R
 import com.zekart.tracken.adapter.ViewPagerAdapter
 import com.zekart.tracken.databinding.ActivityMainBinding
-
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main.view.*
+import androidx.appcompat.widget.Toolbar;
 
 //TODO init permission requests
 

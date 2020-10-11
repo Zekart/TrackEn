@@ -23,14 +23,16 @@
             android:id="@+id/tabs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:tabIndicatorColor="@android:color/holo_red_dark" />
+            app:tabIndicatorColor="@android:color/holo_red_dark"
+            android:layout_below="@id/toolbar" />
+
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewpager"
-        app:layout_anchor="@id/tabs"
-        app:layout_anchorGravity="bottom"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

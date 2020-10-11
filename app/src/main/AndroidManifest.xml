@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.zekart.tracken">
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
@@ -12,11 +13,13 @@
         android:supportsRtl="true"
         android:fitsSystemWindows="true">
         <meta-data android:name="OnlineMaps.Key" android:value="3EF4mAc3omZtrDWhC5V1nrAalDYlIAqY"/>
-
+        <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value=".ui.activity.MainActivity" />
         <activity
             android:name=".ui.activity.MainActivity"
             android:theme="@style/AppTheme"
-            android:parentActivityName=".ui.activity.MainActivity">
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
