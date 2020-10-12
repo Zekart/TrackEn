@@ -3,8 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/menu_item_add_consume"
-        android:icon="@drawable/ic_add_gas_consume"
+        android:id="@+id/menu_item_save"
+        android:icon="@android:drawable/ic_menu_save"
         android:title="@string/btn_consume_fuel"
         app:showAsAction="always" />
     <group android:id="@+id/menu_edit_group">

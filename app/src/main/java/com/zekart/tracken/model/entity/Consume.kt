@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "fuel_consume")
 data class Consume(
     @ColumnInfo(name = "owner_station")
-    var mStationId:Int?,
+    val mStationId:Int?,
     @ColumnInfo(name = "fuel_type")
     val mFuelType:String?,
     @ColumnInfo(name = "consume_count")

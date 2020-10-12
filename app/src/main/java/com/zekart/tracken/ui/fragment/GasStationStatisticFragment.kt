@@ -25,12 +25,11 @@ class GasStationStatisticFragment :Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentGasStationStatisticsBinding.inflate(inflater,container,false)
-        ViewModelProvider(requireActivity(),BaseFactoryVM(requireActivity().application)).get(FragmentStationListViewModel::class.java)
         return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        viewModel = ViewModelProvider(requireActivity(), BaseFactoryVM(requireActivity().application)).get(
+        viewModel = ViewModelProvider(requireActivity()).get(
             FragmentStatisticViewModel::class.java)
         viewModel.allConsume()
 

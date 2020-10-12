@@ -1,11 +1,13 @@
 package com.zekart.tracken.ui.activity
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.WindowManager
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -23,27 +25,24 @@ import com.zekart.tracken.R
 import com.zekart.tracken.databinding.ActivityGasStationBinding
 import com.zekart.tracken.databinding.BottomSheetLayoutBinding
 import com.zekart.tracken.databinding.MainMapLayoutBinding
+import com.zekart.tracken.utils.AppEnums
 import com.zekart.tracken.utils.Constans
 import com.zekart.tracken.utils.CustomMapHelper
-import com.zekart.tracken.utils.Parsing
-import com.zekart.tracken.utils.ViewModeEnum
 import com.zekart.tracken.viewmodel.ActivityGasStationViewModel
-import com.zekart.tracken.viewmodel.BaseFactoryVM
 import com.zekart.tracken.viewmodel.StationActivityFactory
 
 
-class GasStationActivity : AppCompatActivity(), OnMapReadyCallback{
+class GasStationActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var binding: ActivityGasStationBinding
     private lateinit var mapFragment:MapFragment
     private lateinit var mMap:TomtomMap
 
     private var mViewModel:ActivityGasStationViewModel? = null
     private var fusedLocationClient: FusedLocationProviderClient?= null
-    private var mUserWantCreateNewStation:Boolean = false
     private var mMapViewBinding: MainMapLayoutBinding? = null
     private var mEditViewBinding: BottomSheetLayoutBinding? = null
     private var bottomSheetBehavior:BottomSheetBehavior<View>? = null
-    private var selectedViewMode:ViewModeEnum = ViewModeEnum.CREATE_NEW
+    private var selectedViewMode:AppEnums.ActivityMode = AppEnums.ActivityMode.CREATE_NEW
     private var mCurrentStationID:Int? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,7 +56,8 @@ class GasStationActivity : AppCompatActivity(), OnMapReadyCallback{
         mMapViewBinding = binding.includeMapView
 
         mViewModel = ViewModelProvider(this, StationActivityFactory(application, mCurrentStationID)).get(
-            ActivityGasStationViewModel::class.java)
+            ActivityGasStationViewModel::class.java
+        )
 
         initViewElements()
     }
@@ -68,12 +68,6 @@ class GasStationActivity : AppCompatActivity(), OnMapReadyCallback{
             intent.extras.let {
                 if (it != null) {
                     val key  = it.getInt(Constans.START_STATION_ACTIVITY, -1)
-                    selectedViewMode = if ( key < 0){
-                        ViewModeEnum.CREATE_NEW
-                        //onCreateNewStationMode()
-                    }else{
-                        ViewModeEnum.CHANGE_CURRENT
-                    }
                     mCurrentStationID = key
                 }
             }
@@ -82,29 +76,19 @@ class GasStationActivity : AppCompatActivity(), OnMapReadyCallback{
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         this.menuInflater.inflate(R.menu.menu_edit_activity, menu)
-        if (!mUserWantCreateNewStation){
-            menu?.setGroupVisible(R.id.menu_edit_group, false);
-        }
+        //menu?.setGroupVisible(R.id.menu_edit_group, false);
         return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
-            R.id.menu_item_add_consume -> {
-                mEditViewBinding?.linerConsumeFuel.let {
-                    when (it?.visibility) {
-                        View.VISIBLE -> {
-                            it.visibility = View.GONE
-                        }
-                        View.GONE -> {
-                            it.visibility = View.VISIBLE
-                        }
-                    }
-                }
+            R.id.menu_item_save -> {
+                saveSelectedToDb()
             }
 
             R.id.menu_item_change_gas_station -> {
-
+                //mViewModel?.updateStation(mEditViewBinding?.edtConcernName?.text.toString())
+                mEditViewBinding?.txtInputLayoutConcernName?.requestFocusFromTouch()
             }
             R.id.menu_item_delete_gas_station -> {
                 mViewModel?.deleteStation()
@@ -114,26 +98,62 @@ class GasStationActivity : AppCompatActivity(), OnMapReadyCallback{
         return super.onOptionsItemSelected(item)
     }
 
+    private fun saveSelectedToDb(){
+        val nameConcern = mEditViewBinding?.edtConcernName?.text.toString()
+
+        if (nameConcern.isNotEmpty()){
+
+            mViewModel?.setNameConcernFromEdit(nameConcern)
+
+            when(selectedViewMode){
+                AppEnums.ActivityMode.CREATE_NEW ->{
+                    mViewModel?.insertStation()
+                }
+                AppEnums.ActivityMode.CHANGE_CURRENT ->{
+                    mViewModel?.updateStation()
+                }
+            }
+            if (mEditViewBinding?.chekIfNeedConsume?.isChecked!!){
+                mViewModel?.setNewConsume(
+                    mEditViewBinding?.filledExposedDropdown?.text.toString(),
+                    mEditViewBinding?.edtConsumeCount?.text.toString(),
+                    mEditViewBinding?.edtConsumeCost?.text.toString()
+                )
+                mViewModel?.insertConsumeToStation()
+            }
+        }
+    }
+
     private fun initViewElements(){
+        initMapView()
+
         bottomSheetBehavior = BottomSheetBehavior.from(mEditViewBinding!!.bottomSheet)
 
-        mEditViewBinding?.buttonCreateUpdateStation?.setOnClickListener {
-            setStationToDb()
+        mEditViewBinding?.chekIfNeedConsume?.setOnCheckedChangeListener { p0, cheked ->
+            when (cheked) {
+                true -> {
+                    mEditViewBinding?.linerConsumeFuel?.visibility = View.VISIBLE
+                }
+                false -> {
+                    mEditViewBinding?.linerConsumeFuel?.visibility = View.GONE
+                }
+            }
         }
 
-        mViewModel?.getAdapterToFuelType()?.observe(this,{
-            val adapter = ArrayAdapter<String>(
+        mViewModel?.getAdapterToFuelType()?.observe(this, {
+            val adapter = ArrayAdapter(
                 this,
-                R.layout.support_simple_spinner_dropdown_item, it)
+                R.layout.support_simple_spinner_dropdown_item, it
+            )
             mEditViewBinding?.filledExposedDropdown?.setAdapter(adapter)
         })
 
         mViewModel?.getAddressFromRequest()?.observe(this, {
-            mEditViewBinding?.txGasStationAddress?.text = it.toString()
+            mMapViewBinding?.txGasStationAddress?.text = it.toString()
             mViewModel?.setIsAddressLoading(it)
         })
 
-        initMapView()
+
     }
 
     private fun initMapView(){
@@ -143,99 +163,71 @@ class GasStationActivity : AppCompatActivity(), OnMapReadyCallback{
         mapFragment.getAsyncMap(this)
     }
 
-
     override fun onMapReady(tomtomMap: TomtomMap) {
         mMap = tomtomMap
         setUpMap()
     }
 
     private fun setUpMap() {
-        if (ActivityCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1
+            )
             return
         }
 
         mMap.isMyLocationEnabled = true
 
-        fusedLocationClient?.lastLocation?.addOnSuccessListener(this) {
-                location ->
+        fusedLocationClient?.lastLocation?.addOnSuccessListener(this) { location ->
             if (location != null){
-//                lastLocation = location
-                val currentLatLng = LatLng(location.latitude, location.longitude)
-//                val balloon = SimpleMarkerBalloon("You are Here")
-//                map.addMarker(MarkerBuilder(currentLatLng).markerBalloon(balloon))
-                mMap.centerOn(CustomMapHelper.getMapCenterZoomOption(currentLatLng))
-                mViewModel?.setCoordinateCurrent(currentLatLng)
-                mViewModel?.getAddressByLatLng(currentLatLng)
+                if (selectedViewMode != AppEnums.ActivityMode.CHANGE_CURRENT){
+                    val currentLatLng = LatLng(location.latitude, location.longitude)
+                    mMap.centerOn(CustomMapHelper.getMapCenterZoomOption(currentLatLng))
+                    mViewModel?.setCoordinateNewMarker(currentLatLng)
+                    mViewModel?.getAddressByLatLng(currentLatLng)
+                }
             }
 
         }
 
         mMap.addOnMapLongClickListener {
-            mViewModel?.getAddressByLatLng(it)
-            mViewModel?.setCoordinateNewMarker(it)
-            mMap.removeMarkers()
-            mMap.addMarker(CustomMapHelper.constructMarker(this, it))
+            if (selectedViewMode != AppEnums.ActivityMode.CHANGE_CURRENT){
+                mViewModel?.getAddressByLatLng(it)
+                mViewModel?.setCoordinateNewMarker(it)
+                mMap.removeMarkers()
+                mMap.addMarker(CustomMapHelper.constructMarker(this, it))
 
-            bottomSheetBehavior?.state = (BottomSheetBehavior.STATE_EXPANDED)
+                bottomSheetBehavior?.state = (BottomSheetBehavior.STATE_EXPANDED)
+            }
         }
 
         mViewModel?.getStationFromBd()
 
         mViewModel?.getCurrentStation()?.observe(this, {
-            if (it != null){
+            if (it != null) {
                 val stationPosition = it.mPositionInfo
                 if (stationPosition != null) {
                     val latLng = LatLng(stationPosition.mLatitude, stationPosition.mLongitude)
 
                     mEditViewBinding?.edtConcernName?.setText(it.mOwner)
-                    mEditViewBinding?.txGasStationAddress?.text = stationPosition.mAddressInfo
+                    mMapViewBinding?.txGasStationAddress?.text = stationPosition.mAddressInfo
 
                     bottomSheetBehavior?.state = BottomSheetBehavior.STATE_EXPANDED
 
                     drawMarkerOnMap(latLng)
                 }
+                selectedViewMode = AppEnums.ActivityMode.CHANGE_CURRENT
+            } else {
+                selectedViewMode = AppEnums.ActivityMode.CREATE_NEW
             }
         })
     }
 
-    private fun setStationToDb(){
-        mEditViewBinding?.linerConsumeFuel.let { lnt ->
-            val newNameStation = mEditViewBinding?.edtConcernName?.text.toString()
-            when(lnt?.visibility){
-                View.VISIBLE ->{
-
-//                    mViewModel?.mConcernStationName?.let { type ->
-//                        type.value = mEditViewBinding?.edtConcernName?.text.toString()
-//                    }
-//
-//                    mViewModel?.mConsumeFuelCount?.let { consume ->
-//                        consume.value = Parsing.fromEditableToInt(mEditViewBinding?.edtConsumeCount?.text)
-//                    }
-//                    mViewModel?.mCostConsume?.let { cost ->
-//                        cost.value = Parsing.fromEditableToInt(mEditViewBinding?.edtConsumeCost?.text)
-//                    }
-//                    mViewModel?.mFuelType?.let { type ->
-//                        type.value = mEditViewBinding?.filledExposedDropdown?.text.toString()
-//                    }
-
-                    if(mCurrentStationID == -1){
-                        mViewModel?.insertNewStationWithConsume(newNameStation)
-                    }else{
-                        mViewModel?.insertConsumeToStation()
-                    }
-                }
-                View.GONE ->{
-                    mViewModel?.insertStation(newNameStation)
-                }
-                else -> return
-            }
-        }
-    }
-
-    private fun drawMarkerOnMap(latLng:LatLng){
+    private fun drawMarkerOnMap(latLng: LatLng){
         mMap.let {
             it.addMarker(
                 CustomMapHelper.constructMarker(
@@ -243,14 +235,16 @@ class GasStationActivity : AppCompatActivity(), OnMapReadyCallback{
                     latLng
                 )
             )
-            it.centerOn(CustomMapHelper.getMapCenterZoomOption(latLng))
+            it
         }
+        mMap.centerOn(CustomMapHelper.getMapCenterZoomOption(latLng))
     }
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
-        grantResults: IntArray) {
+        grantResults: IntArray
+    ) {
 
         when (requestCode) {
             1 -> {
@@ -271,10 +265,5 @@ class GasStationActivity : AppCompatActivity(), OnMapReadyCallback{
             }
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-
     }
 }

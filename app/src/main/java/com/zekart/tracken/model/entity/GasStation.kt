@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "gas_stations")
 data class GasStation  (
     @ColumnInfo(name = "station_owner")
-    val mOwner:String,
+    var mOwner:String,
     @Embedded
     val mPositionInfo: PositionInfo?
 ){

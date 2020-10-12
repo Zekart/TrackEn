@@ -8,17 +8,22 @@ import com.zekart.tracken.model.entity.ConsumeToGasStation
 import com.zekart.tracken.model.entity.GasStation
 
 class StationRepository(private val stationDao: GasStationDao){
-    private var mAllGasStation: LiveData<List<GasStation>>
-    private var mGasStation: LiveData<GasStation>? = null
-    private var newIdInserted:Long = -1
-
-
+    private var newIdInserted:Long? = -1
     init {
-        mAllGasStation = stationDao.getAllGasStation()
+        stationDao.getAllGasStation()
+        stationDao.getAllConsume()
     }
 
     fun insertStation(station: GasStation){
         stationDao.insertGasStation(station)
+    }
+
+    fun deleteStation(station: GasStation){
+        stationDao.deleteGasStation(station)
+    }
+
+    fun updateStation(station: GasStation){
+        stationDao.updateGasStation(station)
     }
 
     fun insertConsumeStation(consume: Consume){
@@ -27,30 +32,17 @@ class StationRepository(private val stationDao: GasStationDao){
 
     fun insertNewStationWithConsume(station: GasStation, consume: Consume){
         newIdInserted = stationDao.insertGasStation(station)
-        if (newIdInserted > -1){
+        if (newIdInserted != null || newIdInserted!! > -1){
             insertNewConsume(consume)
         }
     }
 
     private fun insertNewConsume(consume: Consume){
-        consume.mStationId = newIdInserted.toInt()
         stationDao.insertConsume(consume)
     }
 
-    fun deleteStation(){
-        mGasStation?.value?.let { stationDao.deleteGasStation(it) }
-    }
-
-    fun updateCurrentStation(station: GasStation){
-        stationDao.updateStation(station)
-    }
-
-    fun getStationById(id:Int){
-        this.mGasStation = stationDao.getStation(id)
-    }
-
-    fun getCurrentStation():LiveData<GasStation>?{
-        return this.mGasStation
+    fun getStationById(id:Int):LiveData<GasStation>{
+        return stationDao.getGasStationById(id)
     }
 
     fun getAllStation():LiveData<List<GasStation>>{

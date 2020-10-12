@@ -37,7 +37,7 @@ class GasStationListFragment: Fragment(), GasStationAdapterListener,LifecycleOwn
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        viewModel = ViewModelProvider(requireActivity(),BaseFactoryVM(requireActivity().application)).get(FragmentStationListViewModel::class.java)
+        viewModel = ViewModelProvider(requireActivity()).get(FragmentStationListViewModel::class.java)
 
         initRecyclerViewStationList()
 

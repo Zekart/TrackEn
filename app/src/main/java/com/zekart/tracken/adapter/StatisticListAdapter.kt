@@ -36,7 +36,6 @@ class StatisticListAdapter(context: Context): RecyclerView.Adapter<StatisticList
     }
 
     override fun getItemCount(): Int {
-        var s = mConsumeToGasStation.size
         return mConsumeToGasStation.size
     }
 

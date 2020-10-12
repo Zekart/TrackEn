@@ -22,10 +22,10 @@ class FragmentStatisticViewModel(application: Application): AndroidViewModel(app
     }
 
     fun allConsume()= viewModelScope.launch(Dispatchers.IO) {
-        mConsumeList = repository.getAllConsume()
+        repository.getAllConsume()
     }
 
     fun getAllConsumeList():LiveData<List<ConsumeToGasStation>>{
-        return mConsumeList
+        return repository.getAllConsume()
     }
 }

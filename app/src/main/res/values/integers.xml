@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="button_create">1</integer>
+    <integer name="button_update">2</integer>
+    <integer name="button_consume">3</integer>
+</resources>

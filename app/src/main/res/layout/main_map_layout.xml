@@ -4,7 +4,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+    <TextView
+        android:id="@+id/tx_gas_station_address"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/design_default_color_on_secondary"
+        android:padding="5dp"
+        android:text="@string/empty_text"
+        android:textAlignment="center"
+        android:textColor="@android:color/holo_green_dark" />
+
     <fragment
         android:id="@+id/mapFragment"
         android:name="com.tomtom.online.sdk.map.MapFragment"
