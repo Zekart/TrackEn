@@ -1,25 +1,26 @@
 package com.zekart.tracken.adapter
 
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
-import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.*
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.zekart.tracken.ui.fragment.GasStationStatisticFragment
 import com.zekart.tracken.ui.fragment.GasStationListFragment
 
-class ViewPagerAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle) :
-    FragmentStateAdapter(fragmentManager, lifecycle) {
+class ViewPagerAdapter(fragmentAct: FragmentActivity) :
+    FragmentStateAdapter(fragmentAct) {
 
-    override fun createFragment(position: Int): Fragment {
-        return when (position) {
-            0 -> GasStationListFragment.newInstance()
-            1 -> GasStationStatisticFragment.newInstance()
-            else -> GasStationListFragment.newInstance()
-        }
+    private val mFragmentList: MutableList<Fragment> = ArrayList()
+
+    init {
+        mFragmentList.add(GasStationListFragment.newInstance())
+        mFragmentList.add(GasStationStatisticFragment.newInstance())
     }
 
     override fun getItemCount(): Int {
-        return 2
+        return mFragmentList.size
+    }
+
+    override fun createFragment(position: Int): Fragment {
+        return mFragmentList[position]
     }
 }

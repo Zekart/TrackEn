@@ -9,7 +9,7 @@ import com.zekart.tracken.model.entity.GasStation
 
 class StationRepository(private val stationDao: GasStationDao){
     private var mAllGasStation: LiveData<List<GasStation>>
-    private lateinit var mGasStation: LiveData<GasStation>
+    private var mGasStation: LiveData<GasStation>? = null
     private var newIdInserted:Long = -1
 
 
@@ -38,7 +38,7 @@ class StationRepository(private val stationDao: GasStationDao){
     }
 
     fun deleteStation(){
-        mGasStation.value?.let { stationDao.deleteGasStation(it) }
+        mGasStation?.value?.let { stationDao.deleteGasStation(it) }
     }
 
     fun updateCurrentStation(station: GasStation){
@@ -49,7 +49,7 @@ class StationRepository(private val stationDao: GasStationDao){
         this.mGasStation = stationDao.getStation(id)
     }
 
-    fun getCurrentStation():LiveData<GasStation>{
+    fun getCurrentStation():LiveData<GasStation>?{
         return this.mGasStation
     }
 

@@ -3,7 +3,6 @@ package com.zekart.tracken.viewmodel
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
-import android.widget.ArrayAdapter
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -16,29 +15,31 @@ import com.zekart.tracken.model.entity.GasStation
 import com.zekart.tracken.model.entity.PositionInfo
 import com.zekart.tracken.repository.MapTomTomRepository
 import com.zekart.tracken.repository.StationRepository
+import com.zekart.tracken.utils.Parsing
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 
-class ActivityGasStationViewModel(application: Application):AndroidViewModel(application) {
+class ActivityGasStationViewModel(application: Application, id: Int?):AndroidViewModel(application) {
     private val mDbRepository:StationRepository
     private val mMapTomTomRepository: MapTomTomRepository
+    private val mCurrentStationID:Int?
 
     private var mCoordinateNewMarker:LatLng = LatLng()
-    private var mCurrentStationId:Int? = null
     private var mCurrentStation = MutableLiveData<GasStation>()
     private var listFuelType = MutableLiveData<List<String>>()
 
-    var mConcernStationName = MutableLiveData<String>()
-    var mFuelType = MutableLiveData<String>()
-    var mConsumeFuelCount = MutableLiveData<Int>()
-    var mCostConsume = MutableLiveData<Int>()
-    var mStationAddress = MutableLiveData<String>()
+    private var mConcernStationName:String = ""
+    private var mFuelType:String = ""
+    private var mConsumeFuelCount:String = ""
+    private var mCostConsume:String = ""
+    private var mStationAddress:String = ""
 
     init {
         val dao = GasStationDataBase.getDatabase(application, viewModelScope).stationDao()
         mDbRepository = StationRepository(dao)
         mMapTomTomRepository = MapTomTomRepository(application)
+        mCurrentStationID = id
     }
 
     fun insertStation(concernName:String) = viewModelScope.launch(Dispatchers.IO){
@@ -58,49 +59,45 @@ class ActivityGasStationViewModel(application: Application):AndroidViewModel(app
     }
 
     fun getStationFromBd() = viewModelScope.launch(Dispatchers.IO){
-        mCurrentStationId?.let { mDbRepository.getStationById(it)}
+        mCurrentStationID?.let { mDbRepository.getStationById(it)}
     }
 
     fun deleteStation() = viewModelScope.launch(Dispatchers.IO){
          mDbRepository.deleteStation()
     }
 
-    @SuppressLint("MissingPermission")
     fun getAddressByLatLng(latLng: LatLng) = viewModelScope.launch(Dispatchers.IO){
         mMapTomTomRepository.getAddressByLatLng(latLng)
     }
 
-    fun setStationId(id:Int?){
-        mCurrentStationId = id
-    }
 
     fun getAddressFromRequest(): LiveData<String> {
-        return mMapTomTomRepository.getAddress().also {
-            mStationAddress.value = it.value
-        }
+        return mMapTomTomRepository.getAddress()
     }
 
     private fun createStationEntity(concernName:String):GasStation{
         val lng = mCoordinateNewMarker.longitude
         val lat = mCoordinateNewMarker.latitude
-        val pos = PositionInfo(mStationAddress.value.toString(), lat, lng)
+        val pos = PositionInfo(mStationAddress.toString(), lat, lng)
 
         return GasStation(concernName,pos)
     }
 
     private fun createConsumeEntity():Consume{
-        val consumeCount = mConsumeFuelCount.value
-        val typeFuel = mFuelType.value
-        val consumeCost = mCostConsume.value
+        val consumeCount = mConsumeFuelCount
+        val typeFuel = mFuelType
+        val consumeCost = mCostConsume
 
-        return Consume( 0,typeFuel,consumeCount,consumeCost)
+        return Consume( 0,typeFuel,
+            Parsing.fromStringToInt(consumeCount),
+            Parsing.fromStringToInt(consumeCost))
     }
 
     fun setCurrentStation(current:GasStation){
         this.mCurrentStation.value = current
     }
 
-    fun getCurrentStation():LiveData<GasStation>{
+    fun getCurrentStation():LiveData<GasStation>?{
         return mDbRepository.getCurrentStation()
     }
 
@@ -118,5 +115,10 @@ class ActivityGasStationViewModel(application: Application):AndroidViewModel(app
 
     fun getAdapterToFuelType():LiveData<List<String>>{
         return listFuelType
+    }
+
+
+    fun setIsAddressLoading(address:String){
+        mStationAddress = address
     }
 }

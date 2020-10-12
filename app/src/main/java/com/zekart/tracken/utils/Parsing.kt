@@ -8,7 +8,11 @@ object Parsing {
         return editable.toString()
     }
 
-    fun fromEditableToInt(editable: Editable?):Int?{
-        return editable.toString().toIntOrNull()
+    fun fromEditableToInt(value: Editable?):Int?{
+        return value.toString().toIntOrNull()
+    }
+
+    fun fromStringToInt(value: String?):Int?{
+        return value?.toIntOrNull()
     }
 }

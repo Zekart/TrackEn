@@ -1,7 +1,6 @@
 package com.zekart.tracken.ui.fragment
 
 import android.content.Intent
-import android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
@@ -11,12 +10,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.zekart.tracken.R
 import com.zekart.tracken.adapter.GasStationListAdapter
-import com.zekart.tracken.databinding.ActivityGasStationBinding
 import com.zekart.tracken.databinding.FragmentGasStationListBinding
-import com.zekart.tracken.databinding.FragmentGasStationStatisticsBinding
 import com.zekart.tracken.ui.activity.GasStationActivity
 import com.zekart.tracken.ui.listeners.GasStationAdapterListener
 import com.zekart.tracken.utils.Constans
+import com.zekart.tracken.viewmodel.BaseFactoryVM
 import com.zekart.tracken.viewmodel.FragmentStationListViewModel
 import kotlinx.android.synthetic.main.fragment_gas_station_list.view.*
 
@@ -32,12 +30,21 @@ class GasStationListFragment: Fragment(), GasStationAdapterListener,LifecycleOwn
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentGasStationListBinding.inflate(inflater,container,false)
+
         return binding?.root
         //return inflater.inflate(R.layout.fragment_gas_station_list, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
+        viewModel = ViewModelProvider(requireActivity(),BaseFactoryVM(requireActivity().application)).get(FragmentStationListViewModel::class.java)
+
         initRecyclerViewStationList()
+
+
+        binding?.fabAddNewStation?.setOnClickListener {
+            onCreateStationActivity(null)
+        }
 
         viewModel.getStationList().observe(viewLifecycleOwner, Observer {
             if (it.isEmpty()){
@@ -51,7 +58,6 @@ class GasStationListFragment: Fragment(), GasStationAdapterListener,LifecycleOwn
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(FragmentStationListViewModel::class.java)
         setHasOptionsMenu(true)
     }
 

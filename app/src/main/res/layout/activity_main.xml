@@ -12,19 +12,12 @@
         android:background="@android:color/black"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_scrollFlags="scroll|enterAlways"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
-
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:tabIndicatorColor="@android:color/holo_red_dark"
-            android:layout_below="@id/toolbar" />
+            />
 
     </com.google.android.material.appbar.AppBarLayout>
 
