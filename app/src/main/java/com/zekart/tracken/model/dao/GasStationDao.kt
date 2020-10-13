@@ -10,19 +10,19 @@ import com.zekart.tracken.model.entity.GasStation
 interface GasStationDao {
 
         @Insert(onConflict = OnConflictStrategy.REPLACE)
-        fun insertGasStation(station: GasStation):Long
+        fun insertGasStation(station: GasStation):Long?
 
         @Update
-        fun updateGasStation(station: GasStation)
+        fun updateGasStation(station: GasStation):Int?
 
         @Delete
-        fun deleteGasStation(gasStation: GasStation)
+        fun deleteGasStation(gasStation: GasStation):Int?
 
         @Query("SELECT * FROM gas_stations WHERE station_id = :id")
-        fun getGasStationById(id:Int):LiveData<GasStation>
+        fun getGasStationById(id:Long):LiveData<GasStation>
 
         @Insert
-        fun insertConsume(consume: Consume)
+        fun insertConsume(consume: Consume):Long?
         //Get all station from db
         @Transaction
         @Query("SELECT * FROM gas_stations")
@@ -31,4 +31,8 @@ interface GasStationDao {
         @Transaction
         @Query("SELECT * FROM gas_stations")
         fun getAllConsume(): LiveData<List<ConsumeToGasStation>>
+
+        @Transaction
+        @Insert
+        fun updateAllGasStationInDb(updatedList: List<GasStation>)
 }

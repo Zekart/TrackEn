@@ -6,8 +6,10 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "fuel_consume")
 data class Consume(
+    @ColumnInfo(name = "user_id")
+    var mUserId:Long?,
     @ColumnInfo(name = "owner_station")
-    val mStationId:Int?,
+    var mStationId:Long?,
     @ColumnInfo(name = "fuel_type")
     val mFuelType:String?,
     @ColumnInfo(name = "consume_count")
@@ -17,5 +19,5 @@ data class Consume(
 ){
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "consume_id")
-    var id: Int? = null
+    var id: Long? = null
 }

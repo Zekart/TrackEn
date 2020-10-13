@@ -30,17 +30,13 @@ class GasStationListFragment: Fragment(), GasStationAdapterListener,LifecycleOwn
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentGasStationListBinding.inflate(inflater,container,false)
-
         return binding?.root
-        //return inflater.inflate(R.layout.fragment_gas_station_list, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
         viewModel = ViewModelProvider(requireActivity()).get(FragmentStationListViewModel::class.java)
 
         initRecyclerViewStationList()
-
 
         binding?.fabAddNewStation?.setOnClickListener {
             onCreateStationActivity(null)
@@ -76,7 +72,7 @@ class GasStationListFragment: Fragment(), GasStationAdapterListener,LifecycleOwn
         return true
     }
 
-    override fun onGasStationClick(id_station: Int?) {
+    override fun onGasStationClick(id_station: Long?) {
         onCreateStationActivity(id_station)
     }
 
@@ -88,7 +84,7 @@ class GasStationListFragment: Fragment(), GasStationAdapterListener,LifecycleOwn
         }
     }
 
-    private fun onCreateStationActivity(id:Int?){
+    private fun onCreateStationActivity(id:Long?){
         val intent = Intent(activity, GasStationActivity::class.java).apply {
             id.let {
                 this.putExtra(Constans.START_STATION_ACTIVITY,id)

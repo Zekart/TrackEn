@@ -21,7 +21,7 @@ class FragmentStationListViewModel(application: Application): AndroidViewModel(a
         getAllStation()
     }
 
-     private fun getAllStation()= viewModelScope.launch(Dispatchers.IO) {
+    private fun getAllStation()= viewModelScope.launch(Dispatchers.IO) {
          mStationList = repository.getAllStation()
     }
 

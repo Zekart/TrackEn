@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">TrackEn</string>
+
+    <string name="not_registered_user_dialog_title">Впервые?</string>
+    <string name="not_registered_user__dialog_message">Введите имя</string>
     <string name="empty_text">--</string>
     <string name="concern_name">Поставщик</string>
     <string name="fuel_type">Тип топлива</string>
@@ -27,4 +30,5 @@
         <item>Бензин</item>
         <item>Газ</item>
     </string-array>
+
 </resources>

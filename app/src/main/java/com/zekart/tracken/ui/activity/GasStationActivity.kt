@@ -30,6 +30,7 @@ import com.zekart.tracken.utils.Constans
 import com.zekart.tracken.utils.CustomMapHelper
 import com.zekart.tracken.viewmodel.ActivityGasStationViewModel
 import com.zekart.tracken.viewmodel.StationActivityFactory
+import java.lang.IllegalStateException
 
 
 class GasStationActivity : AppCompatActivity(), OnMapReadyCallback {
@@ -43,7 +44,7 @@ class GasStationActivity : AppCompatActivity(), OnMapReadyCallback {
     private var mEditViewBinding: BottomSheetLayoutBinding? = null
     private var bottomSheetBehavior:BottomSheetBehavior<View>? = null
     private var selectedViewMode:AppEnums.ActivityMode = AppEnums.ActivityMode.CREATE_NEW
-    private var mCurrentStationID:Int? = null
+    private var mCurrentStationID:Long? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,7 +68,7 @@ class GasStationActivity : AppCompatActivity(), OnMapReadyCallback {
         if (intent.extras != null){
             intent.extras.let {
                 if (it != null) {
-                    val key  = it.getInt(Constans.START_STATION_ACTIVITY, -1)
+                    val key  = it.getLong(Constans.START_STATION_ACTIVITY, -1)
                     mCurrentStationID = key
                 }
             }
@@ -102,24 +103,28 @@ class GasStationActivity : AppCompatActivity(), OnMapReadyCallback {
         val nameConcern = mEditViewBinding?.edtConcernName?.text.toString()
 
         if (nameConcern.isNotEmpty()){
-
+            val consumeChecked = mEditViewBinding?.chekIfNeedConsume?.isChecked!!
             mViewModel?.setNameConcernFromEdit(nameConcern)
 
-            when(selectedViewMode){
-                AppEnums.ActivityMode.CREATE_NEW ->{
-                    mViewModel?.insertStation()
-                }
-                AppEnums.ActivityMode.CHANGE_CURRENT ->{
-                    mViewModel?.updateStation()
-                }
-            }
-            if (mEditViewBinding?.chekIfNeedConsume?.isChecked!!){
+            if (consumeChecked){
                 mViewModel?.setNewConsume(
                     mEditViewBinding?.filledExposedDropdown?.text.toString(),
                     mEditViewBinding?.edtConsumeCount?.text.toString(),
                     mEditViewBinding?.edtConsumeCost?.text.toString()
                 )
-                mViewModel?.insertConsumeToStation()
+            }
+
+            when(selectedViewMode){
+                AppEnums.ActivityMode.CREATE_NEW ->{
+                    mViewModel?.insertStation(consumeChecked)
+                }
+                AppEnums.ActivityMode.CHANGE_CURRENT ->{
+                    if (consumeChecked){
+                        mViewModel?.insertConsumeToStation()
+                    }else{
+                        mViewModel?.updateStation()
+                    }
+                }
             }
         }
     }
@@ -182,27 +187,31 @@ class GasStationActivity : AppCompatActivity(), OnMapReadyCallback {
 
         mMap.isMyLocationEnabled = true
 
-        fusedLocationClient?.lastLocation?.addOnSuccessListener(this) { location ->
-            if (location != null){
+        try {
+            fusedLocationClient?.lastLocation?.addOnSuccessListener(this) { location ->
+                if (location != null){
+                    if (selectedViewMode != AppEnums.ActivityMode.CHANGE_CURRENT){
+                        val currentLatLng = LatLng(location.latitude, location.longitude)
+                        mMap.centerOn(CustomMapHelper.getMapCenterZoomOption(currentLatLng))
+                        mViewModel?.setCoordinateNewMarker(currentLatLng)
+                        mViewModel?.getAddressByLatLng(currentLatLng)
+                    }
+                }
+
+            }
+
+            mMap.addOnMapLongClickListener {
                 if (selectedViewMode != AppEnums.ActivityMode.CHANGE_CURRENT){
-                    val currentLatLng = LatLng(location.latitude, location.longitude)
-                    mMap.centerOn(CustomMapHelper.getMapCenterZoomOption(currentLatLng))
-                    mViewModel?.setCoordinateNewMarker(currentLatLng)
-                    mViewModel?.getAddressByLatLng(currentLatLng)
+                    mViewModel?.getAddressByLatLng(it)
+                    mViewModel?.setCoordinateNewMarker(it)
+                    mMap.removeMarkers()
+                    mMap.addMarker(CustomMapHelper.constructMarker(this, it))
+
+                    bottomSheetBehavior?.state = (BottomSheetBehavior.STATE_EXPANDED)
                 }
             }
-
-        }
-
-        mMap.addOnMapLongClickListener {
-            if (selectedViewMode != AppEnums.ActivityMode.CHANGE_CURRENT){
-                mViewModel?.getAddressByLatLng(it)
-                mViewModel?.setCoordinateNewMarker(it)
-                mMap.removeMarkers()
-                mMap.addMarker(CustomMapHelper.constructMarker(this, it))
-
-                bottomSheetBehavior?.state = (BottomSheetBehavior.STATE_EXPANDED)
-            }
+        }catch (il:IllegalStateException){
+            il.printStackTrace()
         }
 
         mViewModel?.getStationFromBd()

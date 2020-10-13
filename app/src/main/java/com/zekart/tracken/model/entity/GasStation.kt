@@ -14,5 +14,5 @@ data class GasStation  (
 ){
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "station_id")
-    var id: Int? = null
+    var id: Long? = null
 }

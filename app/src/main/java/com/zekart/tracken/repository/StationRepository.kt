@@ -2,20 +2,24 @@ package com.zekart.tracken.repository
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.zekart.tracken.model.dao.FirebaseDaoImpl
 import com.zekart.tracken.model.dao.GasStationDao
 import com.zekart.tracken.model.entity.Consume
 import com.zekart.tracken.model.entity.ConsumeToGasStation
 import com.zekart.tracken.model.entity.GasStation
 
 class StationRepository(private val stationDao: GasStationDao){
-    private var newIdInserted:Long? = -1
+    private var mRequestCommandDone = MutableLiveData<Int>()
+    private var mExternalDb: FirebaseDaoImpl
+
     init {
+        mExternalDb = FirebaseDaoImpl()
         stationDao.getAllGasStation()
         stationDao.getAllConsume()
     }
 
     fun insertStation(station: GasStation){
-        stationDao.insertGasStation(station)
+       stationDao.insertGasStation(station)
     }
 
     fun deleteStation(station: GasStation){
@@ -31,17 +35,14 @@ class StationRepository(private val stationDao: GasStationDao){
     }
 
     fun insertNewStationWithConsume(station: GasStation, consume: Consume){
-        newIdInserted = stationDao.insertGasStation(station)
-        if (newIdInserted != null || newIdInserted!! > -1){
-            insertNewConsume(consume)
+        val tempId = stationDao.insertGasStation(station)
+        if (tempId!= null && tempId > -1){
+            consume.mStationId = tempId
+            insertConsumeStation(consume)
         }
     }
 
-    private fun insertNewConsume(consume: Consume){
-        stationDao.insertConsume(consume)
-    }
-
-    fun getStationById(id:Int):LiveData<GasStation>{
+    fun getStationById(id:Long):LiveData<GasStation>{
         return stationDao.getGasStationById(id)
     }
 
@@ -52,4 +53,18 @@ class StationRepository(private val stationDao: GasStationDao){
     fun getAllConsume():LiveData<List<ConsumeToGasStation>>{
        return stationDao.getAllConsume()
     }
+
+    fun insertToFire(station: GasStation){
+        mExternalDb.saveToFireBase(station)
+    }
+
+    fun getRequestCommand():LiveData<Int>{
+        return mRequestCommandDone
+    }
+
+    fun checkStationFromExternalBd(station: GasStation){
+        mExternalDb.saveToFireBase(station)
+    }
+
+
 }

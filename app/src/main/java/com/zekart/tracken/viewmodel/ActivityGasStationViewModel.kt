@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 import java.lang.ClassCastException
 
 
-class ActivityGasStationViewModel(application: Application, id: Int?):AndroidViewModel(application) {
+class ActivityGasStationViewModel(application: Application, id: Long?):AndroidViewModel(application) {
     private val mDbRepository:StationRepository
     private val mMapTomTomRepository: MapTomTomRepository
 
@@ -27,7 +27,7 @@ class ActivityGasStationViewModel(application: Application, id: Int?):AndroidVie
     private var mCurrentStation:LiveData<GasStation>?
     private var listFuelType = MutableLiveData<List<String>>()
 
-    private val mCurrentStationID = MutableLiveData<Int>()
+    private val mCurrentStationID = MutableLiveData<Long>()
     private var mConcernStationName:String = ""
     private var mFuelType:String = ""
     private var mConsumeFuelCount:String = ""
@@ -43,10 +43,18 @@ class ActivityGasStationViewModel(application: Application, id: Int?):AndroidVie
         mCurrentStationID.value = id
         mCurrentStation = id?.let { mDbRepository.getStationById(it) }
         listFuelType.value =  application.resources.getStringArray(R.array.fuel_type_array).toList()
+
+        mDbRepository.insertToFire(createStationEntity())
     }
 
-    fun insertStation() = viewModelScope.launch(Dispatchers.IO){
-        mDbRepository.insertStation(createStationEntity())
+    fun insertStation(withConsume:Boolean) = viewModelScope.launch(Dispatchers.IO){
+        val temStation = createStationEntity()
+        if (withConsume){
+            //val tempConsume = createConsumeEntity()
+            //mDbRepository.insertNewStationWithConsume(temStation,tempConsume)
+        }else{
+            mDbRepository.insertStation(temStation)
+        }
     }
 
     fun deleteStation() = viewModelScope.launch(Dispatchers.IO){
@@ -61,13 +69,8 @@ class ActivityGasStationViewModel(application: Application, id: Int?):AndroidVie
     }
 
     fun insertConsumeToStation() = viewModelScope.launch(Dispatchers.IO){
-        val tempConsume = createConsumeEntity()
-        if (mCurrentStation!=null){
-            mDbRepository.insertConsumeStation(tempConsume)
-        }else{
-            val tempStation = createStationEntity()
-            mDbRepository.insertNewStationWithConsume(tempStation,tempConsume)
-        }
+//        val consume = createConsumeEntity()
+//        mDbRepository.insertConsumeStation(consume)
     }
 
     fun getStationFromBd() = viewModelScope.launch(Dispatchers.IO){
@@ -116,21 +119,16 @@ class ActivityGasStationViewModel(application: Application, id: Int?):AndroidVie
         return GasStation(mConcernStationName,pos)
     }
 
-    private fun createConsumeEntity():Consume{
-        val consumeCount = mConsumeFuelCount
-        val typeFuel = mFuelType
-        val consumeCost = mCostConsume
-        val stationID = mCurrentStationID.value
-
-        return Consume(stationID,typeFuel,
-            Parsing.fromStringToInt(consumeCount),
-            Parsing.fromStringToInt(consumeCost))
-    }
-
-
-    fun checkErrorInModel():LiveData<String>{
-        return mErrorInViewModel
-    }
+//    private fun createConsumeEntity():Consume{
+//        val consumeCount = mConsumeFuelCount
+//        val typeFuel = mFuelType
+//        val consumeCost = mCostConsume
+//        val stationID = mCurrentStationID.value
+//
+//        return Consume(stationID,typeFuel,
+//            Parsing.fromStringToInt(consumeCount),
+//            Parsing.fromStringToInt(consumeCost))
+//    }
 
 
 }
