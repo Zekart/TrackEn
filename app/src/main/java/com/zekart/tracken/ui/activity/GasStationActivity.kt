@@ -1,13 +1,11 @@
 package com.zekart.tracken.ui.activity
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.view.WindowManager
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -25,9 +23,7 @@ import com.zekart.tracken.R
 import com.zekart.tracken.databinding.ActivityGasStationBinding
 import com.zekart.tracken.databinding.BottomSheetLayoutBinding
 import com.zekart.tracken.databinding.MainMapLayoutBinding
-import com.zekart.tracken.utils.AppEnums
-import com.zekart.tracken.utils.Constans
-import com.zekart.tracken.utils.CustomMapHelper
+import com.zekart.tracken.utils.*
 import com.zekart.tracken.viewmodel.ActivityGasStationViewModel
 import com.zekart.tracken.viewmodel.StationActivityFactory
 import java.lang.IllegalStateException
@@ -35,8 +31,8 @@ import java.lang.IllegalStateException
 
 class GasStationActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var binding: ActivityGasStationBinding
-    private lateinit var mapFragment:MapFragment
-    private lateinit var mMap:TomtomMap
+    private var mapFragment:MapFragment? = null
+    private var mMap:TomtomMap? = null
 
     private var mViewModel:ActivityGasStationViewModel? = null
     private var fusedLocationClient: FusedLocationProviderClient?= null
@@ -51,19 +47,21 @@ class GasStationActivity : AppCompatActivity(), OnMapReadyCallback {
         binding = ActivityGasStationBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        checkSelectedViewMode()
+        checkIDCurrentStation()
 
         mEditViewBinding = binding.includeEditorLayout
         mMapViewBinding = binding.includeMapView
 
-        mViewModel = ViewModelProvider(this, StationActivityFactory(application, mCurrentStationID)).get(
-            ActivityGasStationViewModel::class.java
-        )
+        mViewModel = ViewModelProvider(this,
+            StationActivityFactory(
+                application,
+                LocalDataUtil.getUserID(this),
+                mCurrentStationID)).get(ActivityGasStationViewModel::class.java)
 
         initViewElements()
     }
 
-    private fun checkSelectedViewMode(){
+    private fun checkIDCurrentStation(){
         val intent = intent
         if (intent.extras != null){
             intent.extras.let {
@@ -126,6 +124,8 @@ class GasStationActivity : AppCompatActivity(), OnMapReadyCallback {
                     }
                 }
             }
+        }else{
+            ViewUtil.showToastApplication(this,AppEnums.ToastMessage.EMPTY)
         }
     }
 
@@ -145,6 +145,10 @@ class GasStationActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         }
 
+
+    }
+
+    private fun initViewElementsWithObservers(){
         mViewModel?.getAdapterToFuelType()?.observe(this, {
             val adapter = ArrayAdapter(
                 this,
@@ -158,6 +162,27 @@ class GasStationActivity : AppCompatActivity(), OnMapReadyCallback {
             mViewModel?.setIsAddressLoading(it)
         })
 
+        mViewModel?.getCurrentStation()?.observe(this, {
+            if (it != null) {
+                val stationPosition = it.mPositionInfo
+                val latLng = LatLng(stationPosition.mLatitude, stationPosition.mLongitude)
+
+                mEditViewBinding?.edtConcernName?.setText(it.mConcernName)
+                mMapViewBinding?.txGasStationAddress?.text = stationPosition.mAddressInfo
+
+                bottomSheetBehavior?.state = BottomSheetBehavior.STATE_EXPANDED
+
+                drawMarkerOnMap(latLng)
+                selectedViewMode = AppEnums.ActivityMode.CHANGE_CURRENT
+            } else {
+                selectedViewMode = AppEnums.ActivityMode.CREATE_NEW
+            }
+        })
+
+
+        mViewModel?.getErrorFromMap()?.observe(this, {
+            mMapViewBinding?.txGasStationAddress?.text = it
+        })
 
     }
 
@@ -165,12 +190,13 @@ class GasStationActivity : AppCompatActivity(), OnMapReadyCallback {
         mapFragment = supportFragmentManager.findFragmentById(R.id.mapFragment) as MapFragment
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
-        mapFragment.getAsyncMap(this)
+        mapFragment?.getAsyncMap(this)
     }
 
     override fun onMapReady(tomtomMap: TomtomMap) {
         mMap = tomtomMap
         setUpMap()
+        initViewElementsWithObservers()
     }
 
     private fun setUpMap() {
@@ -185,14 +211,15 @@ class GasStationActivity : AppCompatActivity(), OnMapReadyCallback {
             return
         }
 
-        mMap.isMyLocationEnabled = true
+        mMap?.isMyLocationEnabled = true
 
         try {
+            //TODO Think to change this
             fusedLocationClient?.lastLocation?.addOnSuccessListener(this) { location ->
                 if (location != null){
                     if (selectedViewMode != AppEnums.ActivityMode.CHANGE_CURRENT){
                         val currentLatLng = LatLng(location.latitude, location.longitude)
-                        mMap.centerOn(CustomMapHelper.getMapCenterZoomOption(currentLatLng))
+                        mMap?.centerOn(CustomMapHelper.getMapCenterZoomOption(currentLatLng))
                         mViewModel?.setCoordinateNewMarker(currentLatLng)
                         mViewModel?.getAddressByLatLng(currentLatLng)
                     }
@@ -200,12 +227,12 @@ class GasStationActivity : AppCompatActivity(), OnMapReadyCallback {
 
             }
 
-            mMap.addOnMapLongClickListener {
+            mMap?.addOnMapLongClickListener {
                 if (selectedViewMode != AppEnums.ActivityMode.CHANGE_CURRENT){
                     mViewModel?.getAddressByLatLng(it)
                     mViewModel?.setCoordinateNewMarker(it)
-                    mMap.removeMarkers()
-                    mMap.addMarker(CustomMapHelper.constructMarker(this, it))
+                    mMap?.removeMarkers()
+                    mMap?.addMarker(CustomMapHelper.constructMarker(this, it))
 
                     bottomSheetBehavior?.state = (BottomSheetBehavior.STATE_EXPANDED)
                 }
@@ -215,38 +242,21 @@ class GasStationActivity : AppCompatActivity(), OnMapReadyCallback {
         }
 
         mViewModel?.getStationFromBd()
-
-        mViewModel?.getCurrentStation()?.observe(this, {
-            if (it != null) {
-                val stationPosition = it.mPositionInfo
-                if (stationPosition != null) {
-                    val latLng = LatLng(stationPosition.mLatitude, stationPosition.mLongitude)
-
-                    mEditViewBinding?.edtConcernName?.setText(it.mOwner)
-                    mMapViewBinding?.txGasStationAddress?.text = stationPosition.mAddressInfo
-
-                    bottomSheetBehavior?.state = BottomSheetBehavior.STATE_EXPANDED
-
-                    drawMarkerOnMap(latLng)
-                }
-                selectedViewMode = AppEnums.ActivityMode.CHANGE_CURRENT
-            } else {
-                selectedViewMode = AppEnums.ActivityMode.CREATE_NEW
-            }
-        })
     }
 
     private fun drawMarkerOnMap(latLng: LatLng){
-        mMap.let {
-            it.addMarker(
-                CustomMapHelper.constructMarker(
-                    this,
-                    latLng
+        if (mMap!=null){
+            mMap.let {
+                it?.addMarker(
+                    CustomMapHelper.constructMarker(
+                        this,
+                        latLng
+                    )
                 )
-            )
-            it
+                it
+            }
+            mMap?.centerOn(CustomMapHelper.getMapCenterZoomOption(latLng))
         }
-        mMap.centerOn(CustomMapHelper.getMapCenterZoomOption(latLng))
     }
 
     override fun onRequestPermissionsResult(
@@ -264,7 +274,7 @@ class GasStationActivity : AppCompatActivity(), OnMapReadyCallback {
                         ) == PackageManager.PERMISSION_GRANTED)
                     ) {
                         Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show()
-                        mapFragment.getAsyncMap(this)
+                        mapFragment?.getAsyncMap(this)
                     }
                 } else {
                     Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show()

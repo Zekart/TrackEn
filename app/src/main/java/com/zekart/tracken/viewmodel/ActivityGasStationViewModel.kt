@@ -13,22 +13,21 @@ import com.zekart.tracken.model.entity.GasStation
 import com.zekart.tracken.model.entity.PositionInfo
 import com.zekart.tracken.repository.MapTomTomRepository
 import com.zekart.tracken.repository.StationRepository
-import com.zekart.tracken.utils.Parsing
+import com.zekart.tracken.utils.DataConverting
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.lang.ClassCastException
 
 
-class ActivityGasStationViewModel(application: Application, id: Long?):AndroidViewModel(application) {
+class ActivityGasStationViewModel(application: Application,idUser:Long?, idStation: Long?):AndroidViewModel(application) {
     private val mDbRepository:StationRepository
     private val mMapTomTomRepository: MapTomTomRepository
-
     private var mCoordinateNewMarker:LatLng = LatLng()
+    private var mCurrentUserId:Long? = 0
+
     private var mCurrentStation:LiveData<GasStation>?
     private var listFuelType = MutableLiveData<List<String>>()
-
     private val mCurrentStationID = MutableLiveData<Long>()
-    private var mConcernStationName:String = ""
+    private var mNewConcernStationName:String = ""
     private var mFuelType:String = ""
     private var mConsumeFuelCount:String = ""
     private var mCostConsume:String = ""
@@ -37,40 +36,46 @@ class ActivityGasStationViewModel(application: Application, id: Long?):AndroidVi
     private var mErrorInViewModel = MutableLiveData<String>()
 
     init {
-        val dao = GasStationDataBase.getDatabase(application, viewModelScope).stationDao()
+        val dao = GasStationDataBase.getDatabase(application).stationDao()
         mDbRepository = StationRepository(dao)
         mMapTomTomRepository = MapTomTomRepository(application)
-        mCurrentStationID.value = id
-        mCurrentStation = id?.let { mDbRepository.getStationById(it) }
+        mCurrentUserId = idUser
+        mCurrentStationID.value = idStation
+        mCurrentStation = idStation?.let { mDbRepository.getStationById(it) }
         listFuelType.value =  application.resources.getStringArray(R.array.fuel_type_array).toList()
-
-        mDbRepository.insertToFire(createStationEntity())
+        //mDbRepository.insertToFire(createStationEntity())
     }
 
     fun insertStation(withConsume:Boolean) = viewModelScope.launch(Dispatchers.IO){
-        val temStation = createStationEntity()
+        val tempStation = createStationEntity()
         if (withConsume){
-            //val tempConsume = createConsumeEntity()
-            //mDbRepository.insertNewStationWithConsume(temStation,tempConsume)
+            val tempConsume = createConsumeEntity()
+            mDbRepository.createGasStationWithConsume(tempStation,tempConsume)
         }else{
-            mDbRepository.insertStation(temStation)
+            mDbRepository.createGasStation(tempStation)
         }
     }
 
     fun deleteStation() = viewModelScope.launch(Dispatchers.IO){
-        mCurrentStation?.value?.let { mDbRepository.deleteStation(it) }
+        val station = mCurrentStation?.value
+        if (station != null) {
+            mDbRepository.deleteStation(station)
+        }
     }
 
     fun updateStation() = viewModelScope.launch(Dispatchers.IO){
-        mCurrentStation?.value?.let {
-            it.mOwner = mConcernStationName
-            mDbRepository.updateStation(it)
+        if (mCurrentStation?.value?.mConcernName!= mNewConcernStationName){
+            val tempStation = mCurrentStation?.value
+            if (tempStation!=null){
+                tempStation.mConcernName = mNewConcernStationName
+                mDbRepository.updateStation(tempStation)
+            }
         }
     }
 
     fun insertConsumeToStation() = viewModelScope.launch(Dispatchers.IO){
-//        val consume = createConsumeEntity()
-//        mDbRepository.insertConsumeStation(consume)
+        val consume = createConsumeEntity()
+        mDbRepository.insertConsumeStation(consume)
     }
 
     fun getStationFromBd() = viewModelScope.launch(Dispatchers.IO){
@@ -93,8 +98,12 @@ class ActivityGasStationViewModel(application: Application, id: Long?):AndroidVi
         mMapTomTomRepository.getAddressByLatLng(latLng)
     }
 
+    fun getErrorFromMap():LiveData<String?>{
+        return mMapTomTomRepository.getError()
+    }
+
     fun setNameConcernFromEdit(concern: String){
-        mConcernStationName = concern
+        mNewConcernStationName = concern
     }
 
     fun setNewConsume(typeFuel: String, countFuel:String, costFuel:String){
@@ -111,24 +120,24 @@ class ActivityGasStationViewModel(application: Application, id: Long?):AndroidVi
         mCoordinateNewMarker = position
     }
 
-    private fun createStationEntity():GasStation{
+    private fun createStationEntity(): GasStation {
+        val concern = mNewConcernStationName
         val lng = mCoordinateNewMarker.longitude
         val lat = mCoordinateNewMarker.latitude
         val pos = PositionInfo(mStationAddress, lat, lng)
-
-        return GasStation(mConcernStationName,pos)
+        return GasStation(concern,pos)
     }
-
-//    private fun createConsumeEntity():Consume{
-//        val consumeCount = mConsumeFuelCount
-//        val typeFuel = mFuelType
-//        val consumeCost = mCostConsume
-//        val stationID = mCurrentStationID.value
 //
-//        return Consume(stationID,typeFuel,
-//            Parsing.fromStringToInt(consumeCount),
-//            Parsing.fromStringToInt(consumeCost))
-//    }
+    private fun createConsumeEntity(): Consume {
+        val consumeCount = mConsumeFuelCount
+        val typeFuel = mFuelType
+        val consumeCost = mCostConsume
+        val stationID = mCurrentStationID.value
+
+        return Consume(mCurrentUserId,stationID,typeFuel,
+            DataConverting.fromStringToInt(consumeCount),
+            DataConverting.fromStringToInt(consumeCost))
+    }
 
 
 }

@@ -19,8 +19,8 @@ class MapTomTomRepository(application: Application){
     private var searchApi: SearchApi = OnlineSearchApi.create(application,"3EF4mAc3omZtrDWhC5V1nrAalDYlIAqY")
     private lateinit var lastLocation: Location
 
-    private var mResponseSearch:MutableLiveData<String> = MutableLiveData()
-    private val mResponseError:MutableLiveData<SearchError> = MutableLiveData()
+    private var mResponseSearch = MutableLiveData<String>()
+    private var mResponseError = MutableLiveData<String>()
 
     fun getAddressByLatLng(latLng: LatLng) {
         val revGeoQuery = ReverseGeocoderSearchQueryBuilder(latLng.latitude, latLng.longitude).build()
@@ -40,7 +40,7 @@ class MapTomTomRepository(application: Application){
                 }
             }
             override fun onSearchError(error: SearchError?) {
-                mResponseError.value = error
+                mResponseError.postValue(error?.localizedMessage)
             }
         })
     }
@@ -48,4 +48,9 @@ class MapTomTomRepository(application: Application){
     fun getAddress():LiveData<String>{
         return mResponseSearch
     }
+
+    fun getError():LiveData<String?>{
+        return mResponseError
+    }
+
 }

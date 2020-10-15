@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.zekart.tracken.R
 import com.zekart.tracken.model.entity.GasStation
+import com.zekart.tracken.model.pojo.GasStationResponse
 import com.zekart.tracken.ui.listeners.GasStationAdapterListener
 
 
@@ -15,7 +16,7 @@ class GasStationListAdapter(context: Context, listener: GasStationAdapterListene
     RecyclerView.Adapter<GasStationListAdapter.SelfRecyclerViewHolder>() {
 
     private var mContext:Context = context
-    private var mListGasStation = emptyList<GasStation>()
+    private var mListStation = emptyList<GasStation>()
     private var mStationAdapterListener: GasStationAdapterListener? = null
 
     init {
@@ -32,16 +33,17 @@ class GasStationListAdapter(context: Context, listener: GasStationAdapterListene
     }
 
     override fun getItemCount(): Int {
-        return mListGasStation.size
+        return mListStation.size
     }
 
     override fun onBindViewHolder(holder: SelfRecyclerViewHolder, position: Int) {
+
         val increment = position + 1
         holder.txtCounter.text = increment.toString()
-        holder.txtStationName.text = mListGasStation[position].mOwner
-        holder.txtStationAddress.text = mListGasStation[position].mPositionInfo?.mAddressInfo
+        holder.txtStationName.text = mListStation[position].mConcernName
+        holder.txtStationAddress.text = mListStation[position].mPositionInfo.mAddressInfo
         holder.itemView.setOnClickListener {
-            mStationAdapterListener?.onGasStationClick(mListGasStation[position].id)
+            mStationAdapterListener?.onGasStationClick(mListStation[position].id)
         }
     }
 
@@ -51,8 +53,10 @@ class GasStationListAdapter(context: Context, listener: GasStationAdapterListene
         val txtStationAddress:TextView = itemView.findViewById(R.id.tx_view_gas_station_address)
     }
 
-    internal fun setStation(station: List<GasStation>){
-        this.mListGasStation = station
+    internal fun setStation(station:List<GasStation>?){
+        if (station != null) {
+            mListStation = station
+        }
         notifyDataSetChanged()
     }
 }

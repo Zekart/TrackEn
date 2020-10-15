@@ -31,4 +31,10 @@
         <item>Газ</item>
     </string-array>
 
+    <string-array name="toast_error_array">
+        <item>Один из полей пуст</item>
+        <item>Возникла ошибка*</item>
+        <item>Возникла ошибка*</item>
+    </string-array>
+
 </resources>

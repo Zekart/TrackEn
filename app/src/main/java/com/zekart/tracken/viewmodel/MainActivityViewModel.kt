@@ -17,27 +17,15 @@ class MainActivityViewModel(application: Application): AndroidViewModel(applicat
     private var mUserId = MutableLiveData<Long>()
 
     init {
-        val dao = GasStationDataBase.getDatabase(application, viewModelScope).userDao()
-        mUserId.value = LocalDataUtil.getUserID(application)
+        val dao = GasStationDataBase.getDatabase(application).userDao()
         mDbRepository = UserRepository(dao)
-    }
-
-    fun getUser()= viewModelScope.launch(Dispatchers.IO) {
-        mUserId.value?.let { mDbRepository.getUser(it) }
     }
 
     fun createUser(name:String)= viewModelScope.launch(Dispatchers.IO) {
         mDbRepository.createUser(name)
     }
 
-    fun checkUser():LiveData<User>{
-        return mDbRepository.getCurrentUser()
-    }
-
-
     fun isCreatedUser():LiveData<Long>{
         return mDbRepository.getNewCreatedUser()
     }
-
-
 }

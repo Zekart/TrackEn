@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey
 data class Consume(
     @ColumnInfo(name = "user_id")
     var mUserId:Long?,
-    @ColumnInfo(name = "owner_station")
+    @ColumnInfo(name = "station_id")
     var mStationId:Long?,
     @ColumnInfo(name = "fuel_type")
     val mFuelType:String?,

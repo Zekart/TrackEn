@@ -14,7 +14,6 @@ import com.zekart.tracken.databinding.FragmentGasStationListBinding
 import com.zekart.tracken.ui.activity.GasStationActivity
 import com.zekart.tracken.ui.listeners.GasStationAdapterListener
 import com.zekart.tracken.utils.Constans
-import com.zekart.tracken.viewmodel.BaseFactoryVM
 import com.zekart.tracken.viewmodel.FragmentStationListViewModel
 import kotlinx.android.synthetic.main.fragment_gas_station_list.view.*
 
@@ -43,11 +42,7 @@ class GasStationListFragment: Fragment(), GasStationAdapterListener,LifecycleOwn
         }
 
         viewModel.getStationList().observe(viewLifecycleOwner, Observer {
-            if (it.isEmpty()){
-                view.message_empty_list_station_view.visibility = View.VISIBLE
-            }else{
-                view.message_empty_list_station_view.visibility = View.GONE
-            }
+            view.message_empty_list_station_view.visibility = View.GONE
             adapterRecyclerView?.setStation(it)
         })
     }

@@ -8,15 +8,17 @@ import com.tomtom.online.sdk.map.MarkerAnchor
 import com.tomtom.online.sdk.map.MarkerBuilder
 import com.zekart.tracken.R
 
-object CustomMapHelper {
-    fun constructMarker(context: Context,latLng: LatLng): MarkerBuilder {
-        return MarkerBuilder(latLng)
-            .icon(Icon.Factory.fromResources(context,R.drawable.marker_gas_station))
-            .iconAnchor(MarkerAnchor.Center)
-            .decal(true)
-    }
+class CustomMapHelper {
+    companion object{
+        fun constructMarker(context: Context,latLng: LatLng): MarkerBuilder {
+            return MarkerBuilder(latLng)
+                .icon(Icon.Factory.fromResources(context,R.drawable.marker_gas_station))
+                .iconAnchor(MarkerAnchor.Center)
+                .decal(true)
+        }
 
-    fun getMapCenterZoomOption(position: LatLng): CameraPosition {
-        return CameraPosition.builder(position).animationDuration(100).zoom(15.0).build()
+        fun getMapCenterZoomOption(position: LatLng): CameraPosition {
+            return CameraPosition.builder(position).animationDuration(100).zoom(15.0).build()
+        }
     }
 }

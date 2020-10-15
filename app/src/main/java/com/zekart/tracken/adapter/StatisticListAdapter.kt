@@ -7,12 +7,11 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.zekart.tracken.R
-import com.zekart.tracken.model.entity.Consume
-import com.zekart.tracken.model.entity.ConsumeToGasStation
+import com.zekart.tracken.model.pojo.StatisticResponse
 
 class StatisticListAdapter(context: Context): RecyclerView.Adapter<StatisticListAdapter.SelfRecyclerViewHolder>() {
     private var mContext:Context = context
-    private var mConsumeToGasStation:List<ConsumeToGasStation> = emptyList()
+    private var mStatisticResponseList:List<StatisticResponse> = ArrayList()
     //private var mListConsume = emptyList<Consume>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SelfRecyclerViewHolder {
@@ -25,18 +24,20 @@ class StatisticListAdapter(context: Context): RecyclerView.Adapter<StatisticList
     }
 
     override fun onBindViewHolder(holder: SelfRecyclerViewHolder, position: Int) {
-        holder.txtStationConcern.text = mConsumeToGasStation[position].mGasStation.mOwner
-
-        mConsumeToGasStation[position].mGasStation.let {
-            holder.txtStationAddress.text = it.mPositionInfo?.mAddressInfo
+        mStatisticResponseList[position].mConcernName.let {
+            holder.txtStationConcern.text = it
         }
-        mConsumeToGasStation[position].mConsumeFromGasStationLists.let {
-            holder.txtStationVisits.text = it.size.toString()
+
+        mStatisticResponseList[position].mStationAddress.let {
+            holder.txtStationAddress.text = it
+        }
+        mStatisticResponseList[position].mCountUserConsume.let {
+            holder.txtStationVisits.text = it.toString()
         }
     }
 
     override fun getItemCount(): Int {
-        return mConsumeToGasStation.size
+        return mStatisticResponseList.size
     }
 
     class SelfRecyclerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -45,8 +46,8 @@ class StatisticListAdapter(context: Context): RecyclerView.Adapter<StatisticList
         val txtStationVisits: TextView = itemView.findViewById(R.id.tx_view_statistic_gas_station_visits)
     }
 
-    internal fun setConsume(consume: List<ConsumeToGasStation>){
-        this.mConsumeToGasStation = consume
+    internal fun setConsume(consumeStatisticResponse:List<StatisticResponse>){
+        this.mStatisticResponseList = consumeStatisticResponse
         notifyDataSetChanged()
     }
 }

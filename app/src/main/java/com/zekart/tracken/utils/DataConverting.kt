@@ -2,7 +2,7 @@ package com.zekart.tracken.utils
 
 import android.text.Editable
 
-class Parsing {
+class DataConverting {
 
     companion object{
         fun fromEditableToString(editable: Editable):String{
@@ -16,6 +16,7 @@ class Parsing {
         fun fromStringToInt(value: String?):Int?{
             return value?.toIntOrNull()
         }
+
     }
 
 }

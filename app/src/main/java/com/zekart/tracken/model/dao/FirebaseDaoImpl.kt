@@ -6,10 +6,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.zekart.tracken.model.entity.GasStation
 
 class FirebaseDaoImpl {
-
     private val db:FirebaseFirestore = FirebaseFirestore.getInstance()
-    private val listStation = MutableLiveData<String>()
-
 
     fun getAllStation() {
         db.collection("test")

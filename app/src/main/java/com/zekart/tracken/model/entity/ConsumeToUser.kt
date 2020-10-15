@@ -3,7 +3,7 @@ package com.zekart.tracken.model.entity
 import androidx.room.Embedded
 import androidx.room.Relation
 
-data class ConsumeToUser(
+data class ConsumeToUser (
     @Embedded
     val mUser:User,
     @Relation(

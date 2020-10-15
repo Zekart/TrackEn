@@ -32,11 +32,6 @@
             android:theme="@style/EditActivityTheme"
             android:parentActivityName=".ui.activity.MainActivity">
         </activity>
-        <receiver android:name=".services.NetwokChangedReceiver">
-            <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-            </intent-filter>
-        </receiver>
     </application>
 
 </manifest>

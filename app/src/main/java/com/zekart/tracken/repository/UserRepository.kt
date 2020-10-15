@@ -6,15 +6,11 @@ import com.zekart.tracken.model.dao.UserDao
 import com.zekart.tracken.model.entity.User
 
 class UserRepository(private val userDao: UserDao) {
-    private var mCurrentUser:MutableLiveData<User> = MutableLiveData()
+    private lateinit var mCurrentUser:LiveData<User>
     private var newCreatedIDUser:MutableLiveData<Long> = MutableLiveData()
 
-    fun getUser(id:Long){
-        mCurrentUser.postValue(userDao.getUserById(id))
-    }
-
-    fun getCurrentUser():LiveData<User>{
-        return mCurrentUser
+    fun validateUser(id:Long){
+        mCurrentUser = userDao.getUserById(id)
     }
 
     fun createUser(userName:String){
@@ -23,5 +19,9 @@ class UserRepository(private val userDao: UserDao) {
 
     fun getNewCreatedUser():LiveData<Long>{
         return newCreatedIDUser
+    }
+
+    fun getCurrentUser():LiveData<User>{
+        return mCurrentUser
     }
 }

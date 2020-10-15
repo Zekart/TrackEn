@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.zekart.tracken.model.dao.GasStationDao
 import com.zekart.tracken.model.dao.UserDao
@@ -17,14 +18,13 @@ import kotlinx.coroutines.launch
 abstract class GasStationDataBase : RoomDatabase() {
 
     abstract fun stationDao():GasStationDao
-
     abstract fun userDao():UserDao
 
     companion object{
         @Volatile
         private var DB_INSTANCE:GasStationDataBase? = null
 
-        fun getDatabase(context: Context,scope: CoroutineScope):GasStationDataBase{
+        fun getDatabase(context: Context):GasStationDataBase{
             val tempInstance = DB_INSTANCE
             if (tempInstance != null) {
                 return tempInstance
@@ -35,25 +35,25 @@ abstract class GasStationDataBase : RoomDatabase() {
                     GasStationDataBase::class.java,
                     "gas_station_database"
                 )
-                    .addCallback(DbCallback(scope))
+                    //.addCallback(DbCallback(scope))
                     .build()
                 DB_INSTANCE = instance
                 return instance
             }
         }
     }
-
-    private class DbCallback(
-        private val scope: CoroutineScope
-    ) : RoomDatabase.Callback() {
-
-        override fun onOpen(db: SupportSQLiteDatabase) {
-            super.onOpen(db)
-            DB_INSTANCE?.let { database ->
-                scope.launch {
-                    println(database.queryExecutor)
-                }
-            }
-        }
-    }
+//
+//    private class DbCallback(
+//        private val scope: CoroutineScope
+//    ) : RoomDatabase.Callback() {
+//
+//        override fun onOpen(db: SupportSQLiteDatabase) {
+//            super.onOpen(db)
+//            DB_INSTANCE?.let { database ->
+//                scope.launch {
+//                    println(database.queryExecutor)
+//                }
+//            }
+//        }
+//    }
 }

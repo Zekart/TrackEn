@@ -19,8 +19,8 @@ class LocalDataUtil {
             }
         }
 
-        fun getUserID(app: Application):Long{
-            val sharedPref = app.getSharedPreferences("local_user_id", Context.MODE_PRIVATE)
+        fun getUserID(context: Context):Long{
+            val sharedPref = context.getSharedPreferences("local_user_id", Context.MODE_PRIVATE)
             return sharedPref.getLong("user_id",0)
         }
     }
