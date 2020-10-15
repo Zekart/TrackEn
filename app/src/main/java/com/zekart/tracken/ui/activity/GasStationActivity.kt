@@ -97,7 +97,7 @@ class GasStationActivity : AppCompatActivity(), OnMapReadyCallback, OnAlertDialo
                 mEditViewBinding?.txtInputLayoutConcernName?.requestFocusFromTouch()
             }
             R.id.menu_item_delete_gas_station -> {
-                showCustomDialog(getString(R.string.alert_delete_title),getString(R.string.not_registered_user__dialog_message))
+                showCustomDialog(getString(R.string.alert_delete_title),getString(R.string.alert_delete_message))
             }
         }
 
