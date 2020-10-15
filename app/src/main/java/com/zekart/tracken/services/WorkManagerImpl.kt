@@ -9,7 +9,18 @@ import com.zekart.tracken.utils.Constans
 import java.util.concurrent.ExecutionException
 
 
+/**
+ * Implementing work manager for store data to firebase
+ *  Use OneTimeWorkRequest
+ *
+ *  Call in main activity. After onStop worker create schedule
+ *
+ *  with param : when Int. connection present do planing
+ *
+ **/
+
 class WorkManagerImpl {
+
     companion object{
         private fun getBuilderOneTime(): OneTimeWorkRequest.Builder {
             val constraints = Constraints.Builder()

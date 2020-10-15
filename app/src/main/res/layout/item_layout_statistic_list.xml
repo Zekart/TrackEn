@@ -18,6 +18,7 @@
         android:id="@+id/tx_view_statistic_gas_station_address"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:layout_weight="1"
         android:text="@string/empty_text"
         android:textAlignment="center" />

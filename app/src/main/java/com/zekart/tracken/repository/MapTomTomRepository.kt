@@ -1,7 +1,6 @@
 package com.zekart.tracken.repository
 
 import android.app.Application
-import android.location.Location
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.common.collect.ImmutableList
@@ -13,11 +12,9 @@ import com.tomtom.online.sdk.search.api.revgeo.RevGeoSearchResultListener
 import com.tomtom.online.sdk.search.data.reversegeocoder.ReverseGeocoderFullAddress
 import com.tomtom.online.sdk.search.data.reversegeocoder.ReverseGeocoderSearchQueryBuilder
 import com.tomtom.online.sdk.search.data.reversegeocoder.ReverseGeocoderSearchResponse
-import java.lang.NullPointerException
 
 class MapTomTomRepository(application: Application){
     private var searchApi: SearchApi = OnlineSearchApi.create(application,"3EF4mAc3omZtrDWhC5V1nrAalDYlIAqY")
-    private lateinit var lastLocation: Location
 
     private var mResponseSearch = MutableLiveData<String>()
     private var mResponseError = MutableLiveData<String>()

@@ -1,10 +1,8 @@
 package com.zekart.tracken.utils
 
-import android.app.Application
 import android.content.Context
-import androidx.lifecycle.LiveData
 
-class LocalDataUtil {
+class DataAppUtil {
 
     companion object{
         fun saveUserID(context: Context, id:Long){
@@ -22,6 +20,10 @@ class LocalDataUtil {
         fun getUserID(context: Context):Long{
             val sharedPref = context.getSharedPreferences("local_user_id", Context.MODE_PRIVATE)
             return sharedPref.getLong("user_id",0)
+        }
+
+        fun fromStringToInt(value: String?):Int?{
+            return value?.toIntOrNull()
         }
     }
 }

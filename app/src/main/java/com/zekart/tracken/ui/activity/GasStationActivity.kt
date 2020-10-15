@@ -8,6 +8,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -23,17 +24,20 @@ import com.zekart.tracken.R
 import com.zekart.tracken.databinding.ActivityGasStationBinding
 import com.zekart.tracken.databinding.BottomSheetLayoutBinding
 import com.zekart.tracken.databinding.MainMapLayoutBinding
+import com.zekart.tracken.ui.dialogs.CustomAlertDialog
+import com.zekart.tracken.ui.listeners.OnAlertDialogClick
 import com.zekart.tracken.utils.*
 import com.zekart.tracken.viewmodel.ActivityGasStationViewModel
 import com.zekart.tracken.viewmodel.StationActivityFactory
-import java.lang.IllegalStateException
 
 
-class GasStationActivity : AppCompatActivity(), OnMapReadyCallback {
+class GasStationActivity : AppCompatActivity(), OnMapReadyCallback, OnAlertDialogClick {
     private lateinit var binding: ActivityGasStationBinding
+    private lateinit var customAlertDialog:AlertDialog.Builder
+
     private var mapFragment:MapFragment? = null
     private var mMap:TomtomMap? = null
-
+    private var mOptionMenu:Menu? = null
     private var mViewModel:ActivityGasStationViewModel? = null
     private var fusedLocationClient: FusedLocationProviderClient?= null
     private var mMapViewBinding: MainMapLayoutBinding? = null
@@ -52,11 +56,14 @@ class GasStationActivity : AppCompatActivity(), OnMapReadyCallback {
         mEditViewBinding = binding.includeEditorLayout
         mMapViewBinding = binding.includeMapView
 
-        mViewModel = ViewModelProvider(this,
+        mViewModel = ViewModelProvider(
+            this,
             StationActivityFactory(
                 application,
-                LocalDataUtil.getUserID(this),
-                mCurrentStationID)).get(ActivityGasStationViewModel::class.java)
+                DataAppUtil.getUserID(this),
+                mCurrentStationID
+            )
+        ).get(ActivityGasStationViewModel::class.java)
 
         initViewElements()
     }
@@ -75,7 +82,9 @@ class GasStationActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         this.menuInflater.inflate(R.menu.menu_edit_activity, menu)
-        //menu?.setGroupVisible(R.id.menu_edit_group, false);
+        if (menu != null) {
+            mOptionMenu = menu
+        }
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -84,17 +93,25 @@ class GasStationActivity : AppCompatActivity(), OnMapReadyCallback {
             R.id.menu_item_save -> {
                 saveSelectedToDb()
             }
-
             R.id.menu_item_change_gas_station -> {
-                //mViewModel?.updateStation(mEditViewBinding?.edtConcernName?.text.toString())
                 mEditViewBinding?.txtInputLayoutConcernName?.requestFocusFromTouch()
             }
             R.id.menu_item_delete_gas_station -> {
-                mViewModel?.deleteStation()
+                showCustomDialog(getString(R.string.alert_delete_title),getString(R.string.not_registered_user__dialog_message))
             }
         }
 
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun showCustomDialog(title:String,message:String) {
+        customAlertDialog = CustomAlertDialog.createAlertCustomDialogBuilder(this,
+            this,title,message)
+        customAlertDialog.show()
+    }
+
+    override fun onOkButtonClick() {
+        mViewModel?.deleteStation()
     }
 
     private fun saveSelectedToDb(){
@@ -113,19 +130,19 @@ class GasStationActivity : AppCompatActivity(), OnMapReadyCallback {
             }
 
             when(selectedViewMode){
-                AppEnums.ActivityMode.CREATE_NEW ->{
+                AppEnums.ActivityMode.CREATE_NEW -> {
                     mViewModel?.insertStation(consumeChecked)
                 }
-                AppEnums.ActivityMode.CHANGE_CURRENT ->{
-                    if (consumeChecked){
+                AppEnums.ActivityMode.CHANGE_CURRENT -> {
+                    if (consumeChecked) {
                         mViewModel?.insertConsumeToStation()
-                    }else{
+                    } else {
                         mViewModel?.updateStation()
                     }
                 }
             }
         }else{
-            ViewUtil.showToastApplication(this,AppEnums.ToastMessage.EMPTY)
+            ViewUtil.showToastApplication(this, getString(R.string.unknown_error))
         }
     }
 
@@ -134,7 +151,7 @@ class GasStationActivity : AppCompatActivity(), OnMapReadyCallback {
 
         bottomSheetBehavior = BottomSheetBehavior.from(mEditViewBinding!!.bottomSheet)
 
-        mEditViewBinding?.chekIfNeedConsume?.setOnCheckedChangeListener { p0, cheked ->
+        mEditViewBinding?.chekIfNeedConsume?.setOnCheckedChangeListener { _, cheked ->
             when (cheked) {
                 true -> {
                     mEditViewBinding?.linerConsumeFuel?.visibility = View.VISIBLE
@@ -144,8 +161,6 @@ class GasStationActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
             }
         }
-
-
     }
 
     private fun initViewElementsWithObservers(){
@@ -158,11 +173,13 @@ class GasStationActivity : AppCompatActivity(), OnMapReadyCallback {
         })
 
         mViewModel?.getAddressFromRequest()?.observe(this, {
-            mMapViewBinding?.txGasStationAddress?.text = it.toString()
-            mViewModel?.setIsAddressLoading(it)
+            if (selectedViewMode == AppEnums.ActivityMode.CREATE_NEW){
+                mMapViewBinding?.txGasStationAddress?.text = it.toString()
+                mViewModel?.setIsAddressLoading(it)
+            }
         })
 
-        mViewModel?.getCurrentStation()?.observe(this, {
+        mViewModel?.getCurrentGasStation()?.observe(this, {
             if (it != null) {
                 val stationPosition = it.mPositionInfo
                 val latLng = LatLng(stationPosition.mLatitude, stationPosition.mLongitude)
@@ -174,16 +191,48 @@ class GasStationActivity : AppCompatActivity(), OnMapReadyCallback {
 
                 drawMarkerOnMap(latLng)
                 selectedViewMode = AppEnums.ActivityMode.CHANGE_CURRENT
+                menuViewController(true)
             } else {
                 selectedViewMode = AppEnums.ActivityMode.CREATE_NEW
+                menuViewController(false)
             }
         })
 
 
         mViewModel?.getErrorFromMap()?.observe(this, {
             mMapViewBinding?.txGasStationAddress?.text = it
+            ViewUtil.showToastApplication(this,getString(R.string.unknown_error))
         })
 
+        mViewModel?.onDeleteResponse()?.observe(this,{
+            if (it!=null){
+                ViewUtil.showToastApplication(this, getString(R.string.db_success_deleted))
+                finish()
+            }
+        })
+//
+        mViewModel?.onInsertResponse()?.observe(this,{
+            if (it!=null){
+                if (it>0){
+                    ViewUtil.showToastApplication(this,getString(R.string.db_success_inserted))
+                    mViewModel?.getStationFromBd(it)
+                }else{
+                    ViewUtil.showToastApplication(this,getString(R.string.unknown_error))
+                }
+            }
+        })
+//
+        mViewModel?.onUpdateResponse()?.observe(this,{
+            if (it!=null){
+                ViewUtil.showToastApplication(this,getString(R.string.db_success_updated))
+            }
+        })
+
+        mViewModel?.onConsumeResponse()?.observe(this,{
+            if (it!=null){
+                ViewUtil.showToastApplication(this,getString(R.string.db_success_consume))
+            }
+        })
     }
 
     private fun initMapView(){
@@ -214,7 +263,6 @@ class GasStationActivity : AppCompatActivity(), OnMapReadyCallback {
         mMap?.isMyLocationEnabled = true
 
         try {
-            //TODO Think to change this
             fusedLocationClient?.lastLocation?.addOnSuccessListener(this) { location ->
                 if (location != null){
                     if (selectedViewMode != AppEnums.ActivityMode.CHANGE_CURRENT){
@@ -237,11 +285,9 @@ class GasStationActivity : AppCompatActivity(), OnMapReadyCallback {
                     bottomSheetBehavior?.state = (BottomSheetBehavior.STATE_EXPANDED)
                 }
             }
-        }catch (il:IllegalStateException){
+        }catch (il: IllegalStateException){
             il.printStackTrace()
         }
-
-        mViewModel?.getStationFromBd()
     }
 
     private fun drawMarkerOnMap(latLng: LatLng){
@@ -257,6 +303,13 @@ class GasStationActivity : AppCompatActivity(), OnMapReadyCallback {
             }
             mMap?.centerOn(CustomMapHelper.getMapCenterZoomOption(latLng))
         }
+    }
+
+
+    private fun menuViewController(showEditedOption:Boolean){
+
+        mOptionMenu?.setGroupVisible(R.id.menu_edit_group, showEditedOption)
+
     }
 
     override fun onRequestPermissionsResult(

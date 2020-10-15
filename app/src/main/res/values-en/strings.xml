@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">TrackEn</string>
-    <string name="not_registered_user_dialog_title">Newbie?</string>
-    <string name="not_registered_user__dialog_message">Enter your name</string>
     <string name="empty_text">--</string>
     <string name="concern_name">Concern</string>
     <string name="fuel_type">Fuel type</string>
@@ -19,6 +17,15 @@
     <string name="table_counter">#</string>
     <string name="station_visit">Посещений</string>
 
+    <string name="db_success_inserted">Success creating</string>
+    <string name="db_success_updated">Success updating</string>
+    <string name="db_success_deleted">Success deleted</string>
+
+    <string name="unknown_error">Oooops somthing wrong</string>
+    <string name="alert_delete_title">Delete?</string>
+    <string name="alert_delete_message">All data will be deleted</string>
+    <string name="db_success_consume">Fuel consume success</string>
+
     // List of TabLayout item title name
     <string-array name="tab_item_title">
         <item>Gas station</item>
@@ -31,9 +38,4 @@
         <item>Gas</item>
     </string-array>
 
-    <string-array name="toast_error_array">
-        <item>One of field empty</item>
-        <item>Get some error*</item>
-        <item>Get some error*</item>
-    </string-array>
 </resources>

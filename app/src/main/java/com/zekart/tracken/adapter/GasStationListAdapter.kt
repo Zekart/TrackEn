@@ -8,9 +8,12 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.zekart.tracken.R
 import com.zekart.tracken.model.entity.GasStation
-import com.zekart.tracken.model.pojo.GasStationResponse
 import com.zekart.tracken.ui.listeners.GasStationAdapterListener
 
+/**
+ * Adapter for showing list of gas stations.
+ *
+ * **/
 
 class GasStationListAdapter(context: Context, listener: GasStationAdapterListener):
     RecyclerView.Adapter<GasStationListAdapter.SelfRecyclerViewHolder>() {
@@ -53,6 +56,11 @@ class GasStationListAdapter(context: Context, listener: GasStationAdapterListene
         val txtStationAddress:TextView = itemView.findViewById(R.id.tx_view_gas_station_address)
     }
 
+    /**
+     * Update from LiveData value.
+     * @param station
+     * @see GasStation
+     **/
     internal fun setStation(station:List<GasStation>?){
         if (station != null) {
             mListStation = station

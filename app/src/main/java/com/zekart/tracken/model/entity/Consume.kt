@@ -4,6 +4,9 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
+/**
+ * Main class for consumes
+ **/
 @Entity(tableName = "fuel_consume")
 data class Consume(
     @ColumnInfo(name = "user_id")

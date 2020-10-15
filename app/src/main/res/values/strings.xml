@@ -1,27 +1,35 @@
 <resources>
     <string name="app_name">TrackEn</string>
 
-    <string name="not_registered_user_dialog_title">Впервые?</string>
-    <string name="not_registered_user__dialog_message">Введите имя</string>
     <string name="empty_text">--</string>
     <string name="concern_name">Поставщик</string>
     <string name="fuel_type">Тип топлива</string>
-    <string name="tank_up">Заправленно (л)</string>
+    <string name="tank_up">Заправить (л)</string>
     <string name="tank_up_price">Сумма ($)</string>
     <string name="menu_item_save">Сохранить</string>
     <string name="menu_item_delete">Удалить</string>
     <string name="menu_item_edit">Редактировать</string>
-    <string name="empty_value_message">"Список станций пуст. Добавте новую"</string>
+    <string name="empty_value_message">"Список пуст"</string>
     <string name="menu_add_new_station">Добавить</string>
-    <string name="btn_consume_fuel">Заправится</string>
+    <string name="btn_consume_fuel">Заправиться</string>
     <string name="btn_cancel_consume_fuel">Отмена</string>
     <string name="address">Адрес</string>
     <string name="table_counter">#</string>
-    <string name="station_visit">Посещений</string>
+    <string name="station_visit">Посещённый</string>
+
+    <string name="db_success_inserted">Успешно созданно</string>
+    <string name="db_success_updated">Успешно обновленно</string>
+    <string name="db_success_deleted">Успешно удаленно</string>
+    <string name="db_success_consume">Успешно заправленны</string>
+
+    <string name="alert_delete_title">Удалить?</string>
+    <string name="alert_delete_message">Все данные будут удалены</string>
+
+    <string name="unknown_error">Oooops something wrong</string>
 
     // List of TabLayout item title name
     <string-array name="tab_item_title">
-        <item>Заправки</item>
+        <item>Станции</item>
         <item>Статистика</item>
     </string-array>
 

@@ -7,9 +7,12 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.zekart.tracken.model.entity.User
 
+/**
+ * User dao. Implement only insert to data base
+ **/
+
 @Dao
 interface UserDao {
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertUser(user: User):Long?
 

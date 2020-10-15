@@ -14,6 +14,7 @@ import com.zekart.tracken.databinding.FragmentGasStationListBinding
 import com.zekart.tracken.ui.activity.GasStationActivity
 import com.zekart.tracken.ui.listeners.GasStationAdapterListener
 import com.zekart.tracken.utils.Constans
+import com.zekart.tracken.utils.ViewUtil
 import com.zekart.tracken.viewmodel.FragmentStationListViewModel
 import kotlinx.android.synthetic.main.fragment_gas_station_list.view.*
 
@@ -41,9 +42,12 @@ class GasStationListFragment: Fragment(), GasStationAdapterListener,LifecycleOwn
             onCreateStationActivity(null)
         }
 
-        viewModel.getStationList().observe(viewLifecycleOwner, Observer {
-            view.message_empty_list_station_view.visibility = View.GONE
-            adapterRecyclerView?.setStation(it)
+        viewModel.getStationList().observe(viewLifecycleOwner, {
+            if (it.isNullOrEmpty()){
+                ViewUtil.showSnackBar(view,getString(R.string.empty_value_message))
+            }else{
+                adapterRecyclerView?.setStation(it)
+            }
         })
     }
 
@@ -54,7 +58,7 @@ class GasStationListFragment: Fragment(), GasStationAdapterListener,LifecycleOwn
 
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.menu_list_fragment, menu);
+        inflater.inflate(R.menu.menu_list_fragment, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
 

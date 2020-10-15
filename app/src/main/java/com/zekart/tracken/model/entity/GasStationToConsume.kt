@@ -3,6 +3,9 @@ package com.zekart.tracken.model.entity
 import androidx.room.Embedded
 import androidx.room.Relation
 
+/**
+ * One to many. One gas station many consumes
+ **/
 data class GasStationToConsume (
     @Embedded
     val station: GasStation,

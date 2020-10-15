@@ -6,9 +6,12 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.zekart.tracken.R
 import com.zekart.tracken.adapter.StatisticListAdapter
 import com.zekart.tracken.databinding.FragmentGasStationStatisticsBinding
+import com.zekart.tracken.utils.ViewUtil
 import com.zekart.tracken.viewmodel.FragmentStatisticViewModel
+import kotlinx.android.synthetic.main.fragment_gas_station_statistics.view.*
 
 class GasStationStatisticFragment :Fragment() {
 
@@ -32,10 +35,15 @@ class GasStationStatisticFragment :Fragment() {
 
         initRecyclerViewStatistics()
 
-        viewModel.getAllConsumeListTest().observe(viewLifecycleOwner, Observer {
-            val tempList = viewModel.createStatisticToRecycler(it)
-            adapterRecyclerView?.setConsume(tempList)
-            println()
+        viewModel.getAllConsumeListTest().observe(viewLifecycleOwner, {
+            if (it.isNullOrEmpty()){
+                ViewUtil.showSnackBar(view,getString(R.string.empty_value_message))
+                binding?.root?.lnr_header_statistic?.visibility = View.GONE
+            }else{
+                val tempList = viewModel.createStatisticToRecycler(it)
+                binding?.root?.lnr_header_statistic?.visibility = View.GONE
+                adapterRecyclerView?.setConsume(tempList)
+            }
         })
     }
 

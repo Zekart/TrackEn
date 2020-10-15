@@ -7,7 +7,9 @@
         android:icon="@android:drawable/ic_menu_save"
         android:title="@string/btn_consume_fuel"
         app:showAsAction="always" />
-    <group android:id="@+id/menu_edit_group">
+    <group
+        android:id="@+id/menu_edit_group"
+        android:visible="false">
         <item
             android:id="@+id/menu_item_change_gas_station"
             android:icon="@android:drawable/ic_menu_edit"

@@ -1,10 +1,15 @@
 package com.zekart.tracken.adapter
 
-import androidx.fragment.app.*
-import androidx.lifecycle.Lifecycle
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.zekart.tracken.ui.fragment.GasStationStatisticFragment
 import com.zekart.tracken.ui.fragment.GasStationListFragment
+import com.zekart.tracken.ui.fragment.GasStationStatisticFragment
+
+/**
+ * Adapter for creating two fragment for ViewPager.
+ * @
+ **/
 
 class ViewPagerAdapter(fragmentAct: FragmentActivity) :
     FragmentStateAdapter(fragmentAct) {

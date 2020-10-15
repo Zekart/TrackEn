@@ -5,9 +5,10 @@
     android:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/lnr_header_statistic"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/common_google_signin_btn_icon_dark_normal_background"
+        android:background="@drawable/card_background"
         android:orientation="horizontal">
 
         <TextView

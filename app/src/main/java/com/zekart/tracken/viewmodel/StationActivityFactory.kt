@@ -10,7 +10,6 @@ class StationActivityFactory (val app: Application, private val idUser:Long?, pr
             @Suppress("UNCHECKED_CAST")
             return ActivityGasStationViewModel(app,idUser,idStation) as T
         }
-
         throw IllegalArgumentException("Cant create view model")
     }
 }

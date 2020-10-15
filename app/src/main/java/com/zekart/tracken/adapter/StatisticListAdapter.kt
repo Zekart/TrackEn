@@ -9,10 +9,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.zekart.tracken.R
 import com.zekart.tracken.model.pojo.StatisticResponse
 
+/**
+ * Adapter for showing list of statistics.
+ *
+ * **/
 class StatisticListAdapter(context: Context): RecyclerView.Adapter<StatisticListAdapter.SelfRecyclerViewHolder>() {
     private var mContext:Context = context
     private var mStatisticResponseList:List<StatisticResponse> = ArrayList()
-    //private var mListConsume = emptyList<Consume>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SelfRecyclerViewHolder {
         val rootView: View = LayoutInflater.from(mContext).inflate(
@@ -20,7 +23,7 @@ class StatisticListAdapter(context: Context): RecyclerView.Adapter<StatisticList
             parent,
             false
         )
-        return StatisticListAdapter.SelfRecyclerViewHolder(rootView)
+        return SelfRecyclerViewHolder(rootView)
     }
 
     override fun onBindViewHolder(holder: SelfRecyclerViewHolder, position: Int) {
@@ -45,6 +48,13 @@ class StatisticListAdapter(context: Context): RecyclerView.Adapter<StatisticList
         val txtStationAddress: TextView = itemView.findViewById(R.id.tx_view_statistic_gas_station_address)
         val txtStationVisits: TextView = itemView.findViewById(R.id.tx_view_statistic_gas_station_visits)
     }
+
+
+    /**
+     * Update from LiveData value.
+     * @param consumeStatisticResponse
+     * @see StatisticResponse
+     **/
 
     internal fun setConsume(consumeStatisticResponse:List<StatisticResponse>){
         this.mStatisticResponseList = consumeStatisticResponse

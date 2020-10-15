@@ -3,6 +3,9 @@ package com.zekart.tracken.model.entity
 import androidx.room.Embedded
 import androidx.room.Relation
 
+/**
+ * One to many. One user many consumes
+ **/
 data class ConsumeToUser (
     @Embedded
     val mUser:User,

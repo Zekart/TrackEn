@@ -1,9 +1,14 @@
 package com.zekart.tracken.model.entity
 
-import androidx.room.*
-import androidx.room.ForeignKey.CASCADE
+import androidx.room.ColumnInfo
+import androidx.room.Embedded
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
-//@Entity(tableName = "gas_stations")
+/**
+ * Main entity for gas station
+ **/
+
 @Entity(tableName = "gas_stations")
 data class GasStation  (
     @ColumnInfo(name = "concern_name")

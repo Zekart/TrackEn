@@ -9,19 +9,11 @@ class UserRepository(private val userDao: UserDao) {
     private lateinit var mCurrentUser:LiveData<User>
     private var newCreatedIDUser:MutableLiveData<Long> = MutableLiveData()
 
-    fun validateUser(id:Long){
-        mCurrentUser = userDao.getUserById(id)
-    }
-
     fun createUser(userName:String){
         newCreatedIDUser.postValue(userDao.insertUser(User(userName)))
     }
 
     fun getNewCreatedUser():LiveData<Long>{
         return newCreatedIDUser
-    }
-
-    fun getCurrentUser():LiveData<User>{
-        return mCurrentUser
     }
 }
