@@ -13,11 +13,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.tomtom.online.sdk.common.location.LatLng
 import com.tomtom.online.sdk.map.MapFragment
+import com.tomtom.online.sdk.map.MapManipulationExtension
 import com.tomtom.online.sdk.map.OnMapReadyCallback
 import com.tomtom.online.sdk.map.TomtomMap
 import com.zekart.tracken.R
@@ -31,7 +33,7 @@ import com.zekart.tracken.viewmodel.ActivityGasStationViewModel
 import com.zekart.tracken.viewmodel.StationActivityFactory
 
 
-class GasStationActivity : AppCompatActivity(), OnMapReadyCallback, OnAlertDialogClick {
+class GasStationActivity : AppCompatActivity(), OnMapReadyCallback,OnAlertDialogClick{
     private lateinit var binding: ActivityGasStationBinding
     private lateinit var customAlertDialog:AlertDialog.Builder
 
@@ -97,7 +99,7 @@ class GasStationActivity : AppCompatActivity(), OnMapReadyCallback, OnAlertDialo
                 mEditViewBinding?.txtInputLayoutConcernName?.requestFocusFromTouch()
             }
             R.id.menu_item_delete_gas_station -> {
-                showCustomDialog(getString(R.string.alert_delete_title),getString(R.string.not_registered_user__dialog_message))
+                showCustomDialog(getString(R.string.alert_delete_title),getString(R.string.alert_delete_message))
             }
         }
 
@@ -236,10 +238,16 @@ class GasStationActivity : AppCompatActivity(), OnMapReadyCallback, OnAlertDialo
     }
 
     private fun initMapView(){
-        mapFragment = supportFragmentManager.findFragmentById(R.id.mapFragment) as MapFragment
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        try {
+            mapFragment = supportFragmentManager.findFragmentById(R.id.mapFragment) as MapFragment
+            fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
-        mapFragment?.getAsyncMap(this)
+            mapFragment?.getAsyncMap(this)
+        }catch (e:NullPointerException){
+
+        }catch (m:ApiException){
+
+        }
     }
 
     override fun onMapReady(tomtomMap: TomtomMap) {
