@@ -1,7 +1,10 @@
 package com.zekart.tracken.ui.activity
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.*
 import com.google.android.material.tabs.TabLayoutMediator

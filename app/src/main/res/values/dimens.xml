@@ -6,4 +6,5 @@
     <dimen name="pickable_bottom_sheet_icon_padding">2dp</dimen>
     <dimen name="pickable_bottom_sheet_icon_min_height">12dp</dimen>
     <dimen name="margin_top_edit_fields">5dp</dimen>
+    <dimen name="small_text">12sp</dimen>
 </resources>

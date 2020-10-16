@@ -44,8 +44,9 @@ class GasStationListFragment: Fragment(), GasStationAdapterListener,LifecycleOwn
 
         viewModel.getStationList().observe(viewLifecycleOwner, {
             if (it.isNullOrEmpty()){
-                ViewUtil.showSnackBar(view,getString(R.string.empty_value_message))
+                binding?.frameEmptyStationList?.visibility = View.VISIBLE
             }else{
+                binding?.frameEmptyStationList?.visibility = View.GONE
                 adapterRecyclerView?.setStation(it)
             }
         })

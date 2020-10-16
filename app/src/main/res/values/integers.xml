@@ -3,4 +3,5 @@
     <integer name="button_create">1</integer>
     <integer name="button_update">2</integer>
     <integer name="button_consume">3</integer>
+    <integer name="map_zoom">12</integer>
 </resources>

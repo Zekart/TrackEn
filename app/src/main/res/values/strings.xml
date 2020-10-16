@@ -17,10 +17,20 @@
     <string name="table_counter">#</string>
     <string name="station_visit">Посещённый</string>
 
+    <string name="gas_station_empty_list">Список пуст. Добавте станцию</string>
+    <string name="statistic_empty_list">Статистики посещений нет</string>
+
+    <string name="error_catch_data">Ошибка получение данных</string>
+
     <string name="db_success_inserted">Успешно созданно</string>
     <string name="db_success_updated">Успешно обновленно</string>
     <string name="db_success_deleted">Успешно удаленно</string>
     <string name="db_success_consume">Успешно заправленны</string>
+
+    <string name="db_error_inserted">Добавление не удалось</string>
+    <string name="db_error_updated">Обновление не удалось</string>
+    <string name="db_error_deleted">Удаление не удалось</string>
+    <string name="db_error_consume">Заправка не сохранена</string>
 
     <string name="alert_delete_title">Удалить?</string>
     <string name="alert_delete_message">Все данные будут удалены</string>

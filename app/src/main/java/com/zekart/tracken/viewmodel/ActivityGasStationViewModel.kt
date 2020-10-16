@@ -1,17 +1,19 @@
 package com.zekart.tracken.viewmodel
 
 import android.app.Application
+import android.location.Address
+import android.location.Location
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.tomtom.online.sdk.common.location.LatLng
+import com.google.android.gms.maps.model.LatLng
 import com.zekart.tracken.R
 import com.zekart.tracken.model.db.GasStationDataBase
 import com.zekart.tracken.model.entity.Consume
 import com.zekart.tracken.model.entity.GasStation
 import com.zekart.tracken.model.entity.PositionInfo
-import com.zekart.tracken.repository.MapTomTomRepository
+import com.zekart.tracken.repository.MapRepository
 import com.zekart.tracken.repository.StationRepository
 import com.zekart.tracken.utils.DataAppUtil
 import kotlinx.coroutines.Dispatchers
@@ -21,8 +23,8 @@ import kotlinx.coroutines.launch
 class ActivityGasStationViewModel(application: Application, private val idUser:Long?, idStation: Long?):AndroidViewModel(application) {
 
     private val mDbRepository:StationRepository
-    private val mMapTomTomRepository: MapTomTomRepository
-    private var mCoordinateNewMarker:LatLng = LatLng()
+    private val mMapRepository: MapRepository
+    private var mCoordinateNewMarker = MutableLiveData<LatLng>()
     private var mCurrentStation = MutableLiveData<GasStation>()
     private var listFuelType = MutableLiveData<List<String>>()
 
@@ -40,13 +42,12 @@ class ActivityGasStationViewModel(application: Application, private val idUser:L
     init {
         val dao = GasStationDataBase.getDatabase(application).stationDao()
         mDbRepository = StationRepository(dao)
-        mMapTomTomRepository = MapTomTomRepository(application)
+        mMapRepository = MapRepository(application)
         listFuelType.value =  application.resources.getStringArray(R.array.fuel_type_array).toList()
 
         if (idStation != null) {
             getStationFromBd(idStation)
         }
-
     }
 
     fun getStationFromBd(id:Long) = viewModelScope.launch(Dispatchers.IO){
@@ -85,8 +86,8 @@ class ActivityGasStationViewModel(application: Application, private val idUser:L
         insertConsume.postValue(mDbRepository.insertConsumeStation(consume))
     }
 
-    fun getAddressFromRequest(): LiveData<String> {
-        return mMapTomTomRepository.getAddress()
+    fun getAddressFromRequest(): LiveData<List<Address>> {
+        return mMapRepository.getSearchLocation()
     }
 
     fun getAdapterToFuelType():LiveData<List<String>>{
@@ -94,11 +95,11 @@ class ActivityGasStationViewModel(application: Application, private val idUser:L
     }
 
     fun getAddressByLatLng(latLng: LatLng) = viewModelScope.launch(Dispatchers.IO){
-        mMapTomTomRepository.getAddressByLatLng(latLng)
+        //mMapTomTomRepository.getAddressByLatLng(latLng)
     }
 
-    fun getErrorFromMap():LiveData<String?>{
-        return mMapTomTomRepository.getError()
+    fun getErrorFromMap():LiveData<String>{
+        return mMapRepository.getMapError()
     }
 
     fun setNameConcernFromEdit(concern: String){
@@ -115,14 +116,16 @@ class ActivityGasStationViewModel(application: Application, private val idUser:L
         mStationAddress = address
     }
 
-    fun setCoordinateNewMarker(position:LatLng){
-        mCoordinateNewMarker = position
-    }
+//    fun setCoordinateNewMarker(position:LatLng){
+//        mCoordinateNewMarker = position
+//    }
 
     private fun createStationEntity(): GasStation {
         val concern = mNewConcernStationName
-        val lng = mCoordinateNewMarker.longitude
-        val lat = mCoordinateNewMarker.latitude
+//        val lng = mCoordinateNewMarker.longitude
+//        val lat = mCoordinateNewMarker.latitude
+        val lng = 0.0
+        val lat = 0.0
         val pos = PositionInfo(mStationAddress, lat, lng)
         return GasStation(concern,pos)
     }

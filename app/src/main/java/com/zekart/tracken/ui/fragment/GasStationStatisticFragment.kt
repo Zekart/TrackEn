@@ -37,12 +37,11 @@ class GasStationStatisticFragment :Fragment() {
 
         viewModel.getAllConsumeListTest().observe(viewLifecycleOwner, {
             if (it.isNullOrEmpty()){
-                ViewUtil.showSnackBar(view,getString(R.string.empty_value_message))
-                binding?.root?.lnr_header_statistic?.visibility = View.GONE
+                binding?.frameEmptyStationList?.visibility = View.VISIBLE
             }else{
                 val tempList = viewModel.createStatisticToRecycler(it)
-                binding?.root?.lnr_header_statistic?.visibility = View.GONE
                 adapterRecyclerView?.setConsume(tempList)
+                binding?.frameEmptyStationList?.visibility = View.GONE
             }
         })
     }

@@ -17,6 +17,16 @@
     <string name="table_counter">#</string>
     <string name="station_visit">Посещений</string>
 
+    <string name="gas_station_empty_list">No one. Add new station</string>
+    <string name="statistic_empty_list">Statistics of visities is empty</string>
+
+    <string name="error_catch_data">Data is not available</string>
+
+    <string name="db_error_inserted">Unable to create</string>
+    <string name="db_error_updated">Unable to update</string>
+    <string name="db_error_deleted">Unable to delete</string>
+    <string name="db_error_consume">Unable to consume</string>
+
     <string name="db_success_inserted">Success creating</string>
     <string name="db_success_updated">Success updating</string>
     <string name="db_success_deleted">Success deleted</string>
