@@ -47,8 +47,8 @@ class GasStationListFragment: Fragment(), GasStationAdapterListener,LifecycleOwn
                 binding?.frameEmptyStationList?.visibility = View.VISIBLE
             }else{
                 binding?.frameEmptyStationList?.visibility = View.GONE
-                adapterRecyclerView?.setStation(it)
             }
+            adapterRecyclerView?.setStation(it)
         })
     }
 

@@ -7,9 +7,9 @@ import androidx.room.ColumnInfo
  **/
 data class PositionInfo(
     @ColumnInfo(name = "address_info")
-    val mAddressInfo:String,
+    val address_info:String,
     @ColumnInfo(name = "lat")
-    val mLatitude:Double,
+    val latitude:Double,
     @ColumnInfo(name = "lng")
-    val mLongitude:Double
+    val longitude:Double
 )

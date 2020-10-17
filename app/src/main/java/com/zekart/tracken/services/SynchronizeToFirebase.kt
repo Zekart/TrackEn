@@ -2,9 +2,9 @@ package com.zekart.tracken.services
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import androidx.work.Worker
 import androidx.work.WorkerParameters
-import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.firestore.FirebaseFirestore
 import com.zekart.tracken.model.db.GasStationDataBase
 import com.zekart.tracken.utils.DataAppUtil
@@ -15,7 +15,7 @@ class SynchronizeToFirebase(appContext: Context, workerParams: WorkerParameters)
     @SuppressLint("LogNotTimber")
     override fun doWork(): Result {
         try {
-            val req = uploadToDB()
+            val req = uploadToFirebaseDB()
             if (req){
                 Result.success()
             }else{
@@ -27,7 +27,7 @@ class SynchronizeToFirebase(appContext: Context, workerParams: WorkerParameters)
         return Result.success()
     }
 
-    private fun uploadToDB():Boolean {
+    private fun uploadToFirebaseDB():Boolean {
         try {
             var doneWork = false
 
@@ -57,8 +57,10 @@ class SynchronizeToFirebase(appContext: Context, workerParams: WorkerParameters)
 
             return doneWork
         }catch (e: IllegalStateException){
+            Log.d("test", "getLatency: EXCEPTION");
             return false
         }catch (np: NullPointerException){
+            Log.d("test", "getLatency: EXCEPTION");
             return false
         }
     }

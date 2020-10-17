@@ -2,6 +2,7 @@ package com.zekart.tracken.model.entity
 
 import androidx.room.Embedded
 import androidx.room.Relation
+import java.io.Serializable
 
 /**
  * One to many. One gas station many consumes
@@ -14,5 +15,5 @@ data class GasStationToConsume (
         entityColumn = "station_id",
         entity = Consume::class
     )
-    val mConsumeFromGasStationLists: List<Consume>
-)
+    val consumeFromGasStationLists: List<Consume>
+):Serializable

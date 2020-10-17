@@ -15,11 +15,14 @@
     <string name="btn_cancel_consume_fuel">Отмена</string>
     <string name="address">Адрес</string>
     <string name="table_counter">#</string>
-    <string name="station_visit">Посещённый</string>
+    <string name="station_visit">Посещений</string>
+
+    <string name="error_location">Невозможно определить позицию</string>
 
     <string name="gas_station_empty_list">Список пуст. Добавте станцию</string>
     <string name="statistic_empty_list">Статистики посещений нет</string>
 
+    <string name="error_empty_field">Ошибка. Пустые поля ввода</string>
     <string name="error_catch_data">Ошибка получение данных</string>
 
     <string name="db_success_inserted">Успешно созданно</string>

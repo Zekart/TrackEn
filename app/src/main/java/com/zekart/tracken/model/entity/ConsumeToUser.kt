@@ -8,11 +8,11 @@ import androidx.room.Relation
  **/
 data class ConsumeToUser (
     @Embedded
-    val mUser:User,
+    val user:User,
     @Relation(
         parentColumn = "user_id",
         entityColumn = "user_id",
         entity = Consume::class
     )
-    val mConsumeFromGasStationLists: List<Consume>
+    val consumeFromGasStationLists: List<Consume>
 )

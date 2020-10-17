@@ -1,10 +1,7 @@
 package com.zekart.tracken.ui.activity
 
-import android.Manifest
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.*
 import com.google.android.material.tabs.TabLayoutMediator
@@ -55,12 +52,26 @@ class MainActivity : FragmentActivity(), LifecycleObserver {
     }
 
     private fun initTabLayout(){
-        pagerAdapter = ViewPagerAdapter(this)
-        viewpager.adapter= pagerAdapter
+//        val conStatus = NetworkUtil.isOnline()
+//
+//        if (conStatus!=null && conStatus){
+//            mViewModel?.getAllStationFromFirebase()
+//        }
 
-        TabLayoutMediator(tabs, viewpager) { tab, position ->
-            tab.text = resources.getStringArray(R.array.tab_item_title)[position]
-        }.attach()
+        mViewModel?.synchronizeIsFinished()?.observe(this, Observer {
+            if (it!=null && it){
+                pagerAdapter = ViewPagerAdapter(this)
+                viewpager.adapter= pagerAdapter
+
+                TabLayoutMediator(tabs, viewpager) { tab, position ->
+                    tab.text = resources.getStringArray(R.array.tab_item_title)[position]
+                }.attach()
+                this.viewModelStore.clear()
+                mViewModel = null
+            }
+        })
+
+        //Toast.makeText(this,"Status: $conStatus",Toast.LENGTH_SHORT).show()
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)

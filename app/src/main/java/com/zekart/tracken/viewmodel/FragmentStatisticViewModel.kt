@@ -43,8 +43,8 @@ class FragmentStatisticViewModel(application: Application): AndroidViewModel(app
         }
 
         for (inc in hashStation){
-            val count = list.count { inc.mPositionInfo.mAddressInfo == it.station.mPositionInfo.mAddressInfo}
-            statisticList.add(StatisticResponse(inc.mConcernName,inc.mPositionInfo.mAddressInfo,count))
+            val count = list.count { inc.position_info.address_info == it.station.position_info.address_info}
+            statisticList.add(StatisticResponse(inc.concern_name,inc.position_info.address_info,count))
         }
         return statisticList
     }

@@ -43,8 +43,8 @@ class GasStationListAdapter(context: Context, listener: GasStationAdapterListene
 
         val increment = position + 1
         holder.txtCounter.text = increment.toString()
-        holder.txtStationName.text = mListStation[position].mConcernName
-        holder.txtStationAddress.text = mListStation[position].mPositionInfo.mAddressInfo
+        holder.txtStationName.text = mListStation[position].concern_name
+        holder.txtStationAddress.text = mListStation[position].position_info.address_info
         holder.itemView.setOnClickListener {
             mStationAdapterListener?.onGasStationClick(mListStation[position].id)
         }

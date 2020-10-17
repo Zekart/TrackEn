@@ -2,7 +2,10 @@ package com.zekart.tracken.model.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import com.zekart.tracken.model.entity.*
+import com.zekart.tracken.model.entity.Consume
+import com.zekart.tracken.model.entity.ConsumeToUser
+import com.zekart.tracken.model.entity.GasStation
+import com.zekart.tracken.model.entity.GasStationToConsume
 
 /**
  * Dao interface fot room database.
@@ -14,21 +17,18 @@ interface GasStationDao {
         /**
          * Create new gas station to data base.
          **/
-        @Transaction
         @Insert(onConflict = OnConflictStrategy.REPLACE)
         fun createGasStation(station: GasStation):Long?
 
         /**
          * Update current gas station to data base.
          **/
-        @Transaction
         @Update
         fun updateGasStation(station: GasStation):Int?
 
         /**
          * Delete current gas station to data base.
          **/
-        @Transaction
         @Delete
         fun deleteGasStation(gasStation: GasStation):Int?
 
@@ -42,7 +42,6 @@ interface GasStationDao {
         /**
          * Create consume to user.
          **/
-        @Transaction
         @Insert
         fun createConsume(consume: Consume):Long?
 
@@ -53,6 +52,19 @@ interface GasStationDao {
         @Query("SELECT * FROM gas_stations")
         fun getAllGasStation():LiveData<List<GasStation>>
 
+        @Query("SELECT COUNT(station_id) AS numb_station FROM gas_stations")
+        fun getAllGasStationSize():Int?
+
+        @Query("SELECT COUNT(consume_id) AS numb_consume FROM fuel_consume")
+        fun getAllGasConsumeSize():Int?
+
+        @Transaction
+        @Insert
+        fun insertAllGasStation(list:List<GasStation>)
+
+        @Transaction
+        @Insert
+        fun insertAllConsume(list:List<Consume>)
         /**
          * Take all consume which allow to current user
          **/
@@ -78,7 +90,6 @@ interface GasStationDao {
         /**
          * Get gas station by address
          **/
-        @Transaction
         @Query("SELECT * FROM gas_stations WHERE station_id = :id")
         fun getStationAddressById(id: Long):GasStation
 

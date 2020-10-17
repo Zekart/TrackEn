@@ -12,9 +12,9 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "gas_stations")
 data class GasStation  (
     @ColumnInfo(name = "concern_name")
-    var mConcernName:String?,
+    var concern_name:String?,
     @Embedded
-    val mPositionInfo:PositionInfo
+    val position_info:PositionInfo
 ){
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "station_id")

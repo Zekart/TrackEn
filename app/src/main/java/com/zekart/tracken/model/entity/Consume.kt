@@ -10,17 +10,19 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "fuel_consume")
 data class Consume(
     @ColumnInfo(name = "user_id")
-    var mUserId:Long?,
+    var user_id:Long?,
     @ColumnInfo(name = "station_id")
-    var mStationId:Long?,
+    var station_id:Long?,
     @ColumnInfo(name = "fuel_type")
-    val mFuelType:String?,
+    val fuel_type:String?,
     @ColumnInfo(name = "consume_count")
-    val mCountConsume:Int?,
+    val count_consume:Int?,
     @ColumnInfo(name = "consume_price")
-    val mPriceConsume:Int?
+    val price_consume:Int?
 ){
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "consume_id")
     var id: Long? = null
 }
+
+

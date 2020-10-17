@@ -22,7 +22,7 @@ import java.util.concurrent.ExecutionException
 class WorkManagerImpl {
 
     companion object{
-        private fun getBuilderOneTime(): OneTimeWorkRequest.Builder {
+        private fun getBuilderOneTimeUploadToFireBase(): OneTimeWorkRequest.Builder {
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
@@ -36,7 +36,7 @@ class WorkManagerImpl {
             try {
 
                 manager.cancelAllWorkByTag(Constans.TAG_SYNCHRONIZE)
-                manager.enqueue(getBuilderOneTime().build())
+                manager.enqueue(getBuilderOneTimeUploadToFireBase().build())
 
             }catch (e: ExecutionException) {
                 e.printStackTrace()

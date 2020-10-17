@@ -17,8 +17,11 @@
     <string name="table_counter">#</string>
     <string name="station_visit">Посещений</string>
 
+    <string name="error_location">Position not response</string>
+
     <string name="gas_station_empty_list">No one. Add new station</string>
     <string name="statistic_empty_list">Statistics of visities is empty</string>
+    <string name="error_empty_field">Error. Some field empty</string>
 
     <string name="error_catch_data">Data is not available</string>
 
