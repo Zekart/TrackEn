@@ -33,6 +33,7 @@ import com.zekart.tracken.viewmodel.StationActivityFactory
 
 class GasStationActivity : AppCompatActivity(),OnAlertDialogClick, OnMapReadyCallback,
     GoogleMap.OnMapLongClickListener, GoogleMap.OnMarkerClickListener {
+
     private lateinit var binding: ActivityGasStationBinding
     private lateinit var customAlertDialog:AlertDialog.Builder
     private lateinit var mEditView: BottomSheetLayoutBinding
@@ -67,6 +68,7 @@ class GasStationActivity : AppCompatActivity(),OnAlertDialogClick, OnMapReadyCal
         initViewElements()
     }
 
+    // Check station id from intent
     private fun checkIDCurrentStation(){
         val intent = intent
         if (intent.extras != null){
@@ -78,6 +80,7 @@ class GasStationActivity : AppCompatActivity(),OnAlertDialogClick, OnMapReadyCal
             }
         }
 
+        //Set mode to current activity. Which allow change view elements
         selectedViewMode = when(mCurrentStationID){
             null -> AppEnums.ActivityMode.CREATE_NEW
             -1L, 0L -> AppEnums.ActivityMode.CREATE_NEW
@@ -121,10 +124,10 @@ class GasStationActivity : AppCompatActivity(),OnAlertDialogClick, OnMapReadyCal
         mOptionMenu?.setGroupVisible(R.id.menu_edit_group, showEditedOption)
     }
 
-
     private fun initViewElements(){
         bottomSheetBehavior = BottomSheetBehavior.from(mEditView.bottomSheet)
 
+        //Set Listener to select view. LinerConsumeFuel - view with edit text fields
         mEditView.chekIfNeedConsume.setOnCheckedChangeListener { _, cheked ->
             when (cheked) {
                 true -> {
@@ -138,7 +141,7 @@ class GasStationActivity : AppCompatActivity(),OnAlertDialogClick, OnMapReadyCal
     }
 
     private fun initViewElementsWithObservers(){
-
+        //Init Array adapter from Array from values/string
         mViewModel?.getAdapterToFuelType()?.observe(this, {
             val adapter = ArrayAdapter(
                 this,
@@ -147,6 +150,7 @@ class GasStationActivity : AppCompatActivity(),OnAlertDialogClick, OnMapReadyCal
             mEditView.filledExposedDropdown.setAdapter(adapter)
         })
 
+        //Set value to address on top textView
         mViewModel?.getAddressPosition()?.observe(this, {
             if (selectedViewMode == AppEnums.ActivityMode.CREATE_NEW) {
                 if (it == null){
@@ -161,12 +165,10 @@ class GasStationActivity : AppCompatActivity(),OnAlertDialogClick, OnMapReadyCal
                         resources.getInteger(R.integer.map_zoom).toFloat()
                     )
                 )
-                //mMapViewBinding?.txGasStationAddress?.text = it.toString()
-                //mViewModel?.setIsAddressLoading(it)
-                //binding.txAddressPosition.text = it
             }
         })
 
+        //Return current station entity. If station not null - set View to Edit mode
         mViewModel?.getCurrentGasStation()?.observe(this, {
             if (it != null) {
                 val stationPosition = it.position_info
@@ -182,12 +184,12 @@ class GasStationActivity : AppCompatActivity(),OnAlertDialogClick, OnMapReadyCal
             }
         })
 
-
+        //Return map errors
         mViewModel?.getErrorFromMap()?.observe(this, {
-            //mMapViewBinding?.txGasStationAddress?.text = it getString(R.string.unknown_error)
             ViewUtil.showToastApplication(this, it)
         })
 
+        //Show message success/error from response from db to delete station
         mViewModel?.onDeleteResponse()?.observe(this, {
             if (it != null) {
                 ViewUtil.showToastApplication(this, getString(R.string.db_success_deleted))
@@ -197,6 +199,7 @@ class GasStationActivity : AppCompatActivity(),OnAlertDialogClick, OnMapReadyCal
             }
         })
 
+        //Show message success/error from response from db to insert station
         mViewModel?.onInsertResponse()?.observe(this, {
             if (it != null) {
                 if (it > 0) {
@@ -209,7 +212,8 @@ class GasStationActivity : AppCompatActivity(),OnAlertDialogClick, OnMapReadyCal
                 ViewUtil.showToastApplication(this, getString(R.string.db_error_inserted))
             }
         })
-//
+
+        //Show message success/error from response from db to update station
         mViewModel?.onUpdateResponse()?.observe(this, {
             if (it != null) {
                 ViewUtil.showToastApplication(this, getString(R.string.db_success_updated))
@@ -218,6 +222,7 @@ class GasStationActivity : AppCompatActivity(),OnAlertDialogClick, OnMapReadyCal
             }
         })
 
+        //Show message success/error from response from db to add consume to station
         mViewModel?.onConsumeResponse()?.observe(this, {
             if (it != null) {
                 ViewUtil.showToastApplication(this, getString(R.string.db_success_consume))
@@ -227,6 +232,7 @@ class GasStationActivity : AppCompatActivity(),OnAlertDialogClick, OnMapReadyCal
         })
     }
 
+    //Show user dialog if station set to delete
     private fun showCustomDialog(title: String, message: String) {
         customAlertDialog = CustomAlertDialog.createAlertCustomDialogBuilder(
             this,
@@ -246,6 +252,7 @@ class GasStationActivity : AppCompatActivity(),OnAlertDialogClick, OnMapReadyCal
             val consumeChecked = mEditView.chekIfNeedConsume.isChecked
             mViewModel?.setNameConcernFromEdit(nameConcern)
 
+            //If select consume is checked
             if (consumeChecked){
                 val fuelType = mEditView.filledExposedDropdown.text.toString()
                 val consumeCount = mEditView.edtConsumeCount.text.toString()
@@ -258,6 +265,7 @@ class GasStationActivity : AppCompatActivity(),OnAlertDialogClick, OnMapReadyCal
                 }
             }
 
+            //Check what need to do after press button save
             when(selectedViewMode){
                 AppEnums.ActivityMode.CREATE_NEW -> {
                     mViewModel?.insertStation(consumeChecked)
@@ -306,12 +314,8 @@ class GasStationActivity : AppCompatActivity(),OnAlertDialogClick, OnMapReadyCal
         if (selectedViewMode != AppEnums.ActivityMode.CHANGE_CURRENT){
             if (location!=null){
                 mMap?.clear()
-
-                drawMarkerOnMap(location,"New marker")
-
+                drawMarkerOnMap(location,"New station")
                 mViewModel?.checkAddressByLatLng(location)
-//                mViewModel?.getAddressByLatLng(it)
-                //mViewModel?.setCoordinateNewMarker(location)
                 bottomSheetBehavior?.state = (BottomSheetBehavior.STATE_EXPANDED)
             }else{
                 ViewUtil.showToastApplication(this, getString(R.string.error_catch_data))
@@ -323,6 +327,7 @@ class GasStationActivity : AppCompatActivity(),OnAlertDialogClick, OnMapReadyCal
         TODO("Not yet implemented")
     }
 
+    //Draws marker on map
     private fun drawMarkerOnMap(latLng: LatLng, title: String){
         mMap?.clear()
         mMap?.addMarker(
@@ -338,6 +343,7 @@ class GasStationActivity : AppCompatActivity(),OnAlertDialogClick, OnMapReadyCal
                 zoomlevel = resources.getInteger(R.integer.map_zoom).toFloat()
             }
 
+            //Zooming map
             mMap?.moveCamera(
                 CameraUpdateFactory.newLatLngZoom(
                     LatLng(latLng.latitude, latLng.longitude),

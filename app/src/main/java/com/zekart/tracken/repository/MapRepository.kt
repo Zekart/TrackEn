@@ -15,6 +15,10 @@ import java.io.IOException
 
 class MapRepository(private val context: Context){
 
+    /**
+     * Repository to get from Google API location info
+     */
+
     private val mZoomMap:Float
     private lateinit var mFusedLocationProviderClient:FusedLocationProviderClient
     private var mGeocoder:Geocoder
@@ -31,6 +35,7 @@ class MapRepository(private val context: Context){
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context)
     }
 
+    //Init Location client to position devices
     fun getDeviceLocation(){
         try {
             val locationResult = mFusedLocationProviderClient.lastLocation
@@ -55,6 +60,7 @@ class MapRepository(private val context: Context){
         }
     }
 
+    //Get address from LatLng. Return address when connection is true. Else -> set " - "
      fun getLocation(position:LatLng){
         try {
             val m = mGeocoder.getFromLocation(position.latitude, position.longitude, 1)
@@ -88,6 +94,7 @@ class MapRepository(private val context: Context){
         }
     }
 
+    //Get address can return null value. To prevent show user null -> to empty string
     private fun checkAddressNull(value:String?):String{
         return if (value.isNullOrEmpty()){
             ""

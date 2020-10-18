@@ -1,16 +1,19 @@
 package com.zekart.tracken.repository
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.room.Transaction
 import com.zekart.tracken.model.dao.GasStationDao
 import com.zekart.tracken.model.entity.Consume
 import com.zekart.tracken.model.entity.GasStation
 import com.zekart.tracken.model.entity.GasStationToConsume
-import com.zekart.tracken.model.pojo.StatisticResponse
+
+/**
+ *
+ * Repository to work wih station entity in Data Base
+ *
+ */
 
 class StationRepository(private val stationDao: GasStationDao){
-    private var mutableStatistic = MutableLiveData<List<StatisticResponse>>()
 
     fun deleteStation(station: GasStation): Int? {
         return stationDao.deleteGasStation(station)

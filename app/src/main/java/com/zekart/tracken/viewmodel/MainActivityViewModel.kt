@@ -76,6 +76,7 @@ class MainActivityViewModel(application: Application): AndroidViewModel(applicat
         return synchronizeErrorStation
     }
 
+    //Check connection before get data from Firebase
     fun  checkConnection(){
         if (synchronizeIsFinishedStation.value == true && synchronizeIsFinishedStation.value == true){
             return
@@ -92,6 +93,7 @@ class MainActivityViewModel(application: Application): AndroidViewModel(applicat
         }
     }
 
+    //Get consume data from Firebase and save to room
     private fun convertConsumeAndSaveToDB(value: Map<String, Any>?)= viewModelScope.launch(Dispatchers.IO) {
         if (value!=null){
             try {
@@ -99,8 +101,10 @@ class MainActivityViewModel(application: Application): AndroidViewModel(applicat
                 val mConsume = gson.fromJson(jsonFromFirebase, ConsumeBundle::class.java)
                 val sizeInDb = mDbRepositoryStation.getAllConsumeSize()
 
+                //Check if room consume table is empty
                 if (sizeInDb!=null){
                     if (sizeInDb == 0){
+                        //Set consume data from external db
                         val done = mConsume.consume?.let { mDbRepositoryStation.insertAllConsume(it) }
                         if (done!=null && done.isNotEmpty()){
                             synchronizeIsFinishedConsume.postValue(true)
@@ -118,6 +122,7 @@ class MainActivityViewModel(application: Application): AndroidViewModel(applicat
         }
     }
 
+    //Get consume data from Firebase and save to room
     private fun convertStationAndSaveToDB(value: Map<String, Any>?)= viewModelScope.launch(Dispatchers.IO) {
         if (value!=null){
             try {
@@ -125,8 +130,10 @@ class MainActivityViewModel(application: Application): AndroidViewModel(applicat
                 val mStation = gson.fromJson(p, StationBundle::class.java)
                 val sizeInDb = mDbRepositoryStation.getAllStationSize()
 
+                //Check if room station table is empty
                 if (sizeInDb!=null){
                     if (sizeInDb == 0){
+                        //Set station data from external db
                         val done = mStation.station_list?.let { mDbRepositoryStation.insertAllStation(it) }
                         if (done!=null && done.isNotEmpty()){
                             synchronizeIsFinishedStation.postValue(true)

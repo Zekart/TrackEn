@@ -10,6 +10,11 @@ class FireBaseRepository(private val firebase: FirebaseFirestore) {
     private var mListStations = MutableLiveData<Map<String, Any>?>()
     private var mListConsume = MutableLiveData<Map<String, Any>?>()
 
+    /**
+     * Get data from Firebase
+     * @param userId
+     * Get data by current user id
+     */
     fun getStoredData(userId:Long){
         try {
             firebase.collection("stations").document(userId.toString())

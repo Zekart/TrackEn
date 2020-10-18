@@ -9,6 +9,11 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.zekart.tracken.model.db.GasStationDataBase
 import com.zekart.tracken.utils.DataAppUtil
 
+/**
+ * WorkManager to save data to remote data base
+ * @see WorkManagerImpl
+ */
+
 class SynchronizeToFirebase(appContext: Context, workerParams: WorkerParameters):
     Worker(appContext, workerParams) {
 
@@ -38,6 +43,7 @@ class SynchronizeToFirebase(appContext: Context, workerParams: WorkerParameters)
             val consumeList = dao.getConsumeForServer(userId)
             val stationList = dao.getGasStationForServer()
 
+            //Create HasMap to save data in Firebase
             val consumeMap: MutableMap<String, Any> = HashMap()
             consumeMap["consume"] = consumeList
 

@@ -34,6 +34,10 @@ class MainActivity : FragmentActivity(), LifecycleObserver {
         checkIfUserAlreadyRegistered()
     }
 
+    /**
+     *Validate current user
+     * @see DataAppUtil
+     */
     private fun checkIfUserAlreadyRegistered(){
         val tempIdUser = DataAppUtil.getUserID(this)
 
@@ -54,8 +58,8 @@ class MainActivity : FragmentActivity(), LifecycleObserver {
         }
     }
 
+    //Get data from Firebase db
     private fun initSynchronize(){
-
         mViewModel?.checkConnection()
 
         mViewModel?.synchronizeIsErrorConsume()?.observe(this, Observer {
