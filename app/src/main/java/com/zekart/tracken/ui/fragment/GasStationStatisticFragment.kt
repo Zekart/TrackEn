@@ -3,15 +3,12 @@ package com.zekart.tracken.ui.fragment
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.zekart.tracken.R
 import com.zekart.tracken.adapter.StatisticListAdapter
 import com.zekart.tracken.databinding.FragmentGasStationStatisticsBinding
-import com.zekart.tracken.utils.ViewUtil
+import com.zekart.tracken.model.pojo.StatisticResponse
 import com.zekart.tracken.viewmodel.FragmentStatisticViewModel
-import kotlinx.android.synthetic.main.fragment_gas_station_statistics.view.*
 
 class GasStationStatisticFragment :Fragment() {
 
@@ -36,13 +33,14 @@ class GasStationStatisticFragment :Fragment() {
         initRecyclerViewStatistics()
 
         viewModel.getAllConsumeListTest().observe(viewLifecycleOwner, {
+            var tempList:List<StatisticResponse>? = null
             if (it.isNullOrEmpty()){
                 binding?.frameEmptyStationList?.visibility = View.VISIBLE
             }else{
-                val tempList = viewModel.createStatisticToRecycler(it)
-                adapterRecyclerView?.setConsume(tempList)
                 binding?.frameEmptyStationList?.visibility = View.GONE
+                tempList = viewModel.createStatisticToRecycler(it)
             }
+            adapterRecyclerView?.setConsume(tempList)
         })
     }
 

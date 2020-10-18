@@ -17,7 +17,11 @@
     <string name="table_counter">#</string>
     <string name="station_visit">Посещений</string>
 
+    <string name="error_synchronize_station">Can`t get stations from Firebase</string>
+    <string name="error_synchronize_consume">Can`t get consumes from Firebase</string>
+
     <string name="error_location">Position not response</string>
+    <string name="error_address_location">Can`t get address</string>
 
     <string name="gas_station_empty_list">No one. Add new station</string>
     <string name="statistic_empty_list">Statistics of visities is empty</string>

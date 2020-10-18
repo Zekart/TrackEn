@@ -17,7 +17,11 @@
     <string name="table_counter">#</string>
     <string name="station_visit">Посещений</string>
 
+    <string name="error_synchronize_station">Ошибка получения станций с Firebase</string>
+    <string name="error_synchronize_consume">Ошибка получения заправок с Firebase</string>
+
     <string name="error_location">Невозможно определить позицию</string>
+    <string name="error_address_location">Невозможно определить адрес</string>
 
     <string name="gas_station_empty_list">Список пуст. Добавте станцию</string>
     <string name="statistic_empty_list">Статистики посещений нет</string>

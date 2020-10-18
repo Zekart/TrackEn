@@ -1,11 +1,8 @@
 package com.zekart.tracken.repository
 
 import android.content.Context
-import android.location.Address
 import android.location.Geocoder
-import android.location.Location
 import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -15,7 +12,6 @@ import com.zekart.tracken.R
 import com.zekart.tracken.model.pojo.CustomLocation
 import com.zekart.tracken.utils.Constans
 import java.io.IOException
-import java.lang.NullPointerException
 
 class MapRepository(private val context: Context){
 
@@ -81,11 +77,13 @@ class MapRepository(private val context: Context){
                     ))
             }
         } catch (e: NullPointerException)  {
-            mMapError.value = e.localizedMessage
+            mAddress.postValue(CustomLocation("-",position))
+            mMapError.postValue(context.getString(R.string.error_address_location))
             Log.e(Constans.TAG_GOOGLE_MAP, "Exception: %s $e.localizedMessage")
         }
         catch (e: IOException)  {
-            mMapError.value = e.localizedMessage
+            mAddress.postValue(CustomLocation("-",position))
+            mMapError.postValue(context.getString(R.string.error_address_location))
             Log.e(Constans.TAG_GOOGLE_MAP, "Exception: %s $e.localizedMessage")
         }
     }

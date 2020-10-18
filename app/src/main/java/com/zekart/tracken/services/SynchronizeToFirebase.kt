@@ -33,25 +33,26 @@ class SynchronizeToFirebase(appContext: Context, workerParams: WorkerParameters)
 
             val dao = GasStationDataBase.getDatabase(applicationContext).stationDao()
             val fireDb = FirebaseFirestore.getInstance()
+            val userId = DataAppUtil.getUserID(applicationContext)
 
-            val consumeList = dao.getConsumeForServer(DataAppUtil.getUserID(applicationContext))
+            val consumeList = dao.getConsumeForServer(userId)
             val stationList = dao.getGasStationForServer()
 
             val consumeMap: MutableMap<String, Any> = HashMap()
             consumeMap["consume"] = consumeList
 
             val stationMap: MutableMap<String, Any> = HashMap()
-            stationMap["stations"] = stationList
+            stationMap["station"] = stationList
 
-            fireDb.collection("db")
-                .document("consume")
+            fireDb.collection("consumes")
+                .document(userId.toString())
                 .set(consumeMap).addOnCompleteListener {
                     doneWork = true
                 }
 
-            fireDb.collection("db")
-                .document("station_list")
-                .update(stationMap).addOnCompleteListener {
+            fireDb.collection("stations")
+                .document(userId.toString())
+                .set(stationMap).addOnCompleteListener {
                     doneWork = true
                 }
 

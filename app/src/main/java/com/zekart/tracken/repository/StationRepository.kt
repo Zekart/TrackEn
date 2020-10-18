@@ -40,11 +40,11 @@ class StationRepository(private val stationDao: GasStationDao){
         return stationDao.getAllGasConsumeSize()
     }
 
-    fun insertAllStation(station:List<GasStation>){
+    fun insertAllStation(station:List<GasStation>):LongArray?{
         return stationDao.insertAllGasStation(station)
     }
 
-    fun insertAllConsume(consume:List<Consume>){
+    fun insertAllConsume(consume:List<Consume>):LongArray?{
         return stationDao.insertAllConsume(consume)
     }
 

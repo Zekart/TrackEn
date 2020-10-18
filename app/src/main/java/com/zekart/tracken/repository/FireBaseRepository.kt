@@ -10,24 +10,25 @@ class FireBaseRepository(private val firebase: FirebaseFirestore) {
     private var mListStations = MutableLiveData<Map<String, Any>?>()
     private var mListConsume = MutableLiveData<Map<String, Any>?>()
 
-    fun getStoredData(){
+    fun getStoredData(userId:Long){
 
         try {
-            firebase.collection("db").document("station_list")
+            firebase.collection("stations").document(userId.toString())
                 .get()
                 .addOnSuccessListener { querySnapshot ->
                     mListStations.postValue(querySnapshot.data)
                 }
-                .addOnFailureListener { exception ->
+                .addOnFailureListener { _ ->
                     mListStations.postValue(null)
                 }
 
-            firebase.collection("db").document("consume")
+            firebase.collection("consumes")
+                .document(userId.toString())
                 .get()
                 .addOnSuccessListener { querySnapshot ->
                     mListConsume.postValue(querySnapshot.data)
                 }
-                .addOnFailureListener { exception ->
+                .addOnFailureListener { _ ->
                     mListConsume.postValue(null)
                 }
 

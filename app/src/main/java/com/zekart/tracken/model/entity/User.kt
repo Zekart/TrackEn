@@ -14,5 +14,5 @@ data class User(
 ){
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "user_id")
-    var id: Long? = null
+    var id: Long? = 1
 }

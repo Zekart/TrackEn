@@ -177,6 +177,7 @@ class GasStationActivity : AppCompatActivity(),OnAlertDialogClick, OnMapReadyCal
                 bottomSheetBehavior?.state = BottomSheetBehavior.STATE_EXPANDED
 
                 menuViewController(true)
+                selectedViewMode = AppEnums.ActivityMode.CHANGE_CURRENT
                 drawMarkerOnMap(latLng,it.concern_name.toString())
             }
         })
@@ -242,7 +243,7 @@ class GasStationActivity : AppCompatActivity(),OnAlertDialogClick, OnMapReadyCal
         val nameConcern = mEditView.edtConcernName.text.toString()
 
         if (nameConcern.isNotEmpty()){
-            val consumeChecked = mEditView.chekIfNeedConsume.isChecked!!
+            val consumeChecked = mEditView.chekIfNeedConsume.isChecked
             mViewModel?.setNameConcernFromEdit(nameConcern)
 
             if (consumeChecked){

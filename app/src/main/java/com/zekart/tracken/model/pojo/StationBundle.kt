@@ -5,6 +5,6 @@ import com.zekart.tracken.model.entity.GasStation
 import java.io.Serializable
 
 data class StationBundle (
-    @SerializedName("stations")
+    @SerializedName("station")
     var station_list:List<GasStation>? = null
 ):Serializable

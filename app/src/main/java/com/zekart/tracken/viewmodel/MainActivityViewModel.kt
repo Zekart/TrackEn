@@ -8,8 +8,6 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
 import com.zekart.tracken.model.db.GasStationDataBase
-import com.zekart.tracken.model.entity.ConsumeToUser
-import com.zekart.tracken.model.entity.GasStationToConsume
 import com.zekart.tracken.model.pojo.ConsumeBundle
 import com.zekart.tracken.model.pojo.StationBundle
 import com.zekart.tracken.repository.FireBaseRepository
@@ -28,10 +26,12 @@ class MainActivityViewModel(application: Application): AndroidViewModel(applicat
     private var connectionStatus:Boolean? = null
     private var mListStations:LiveData<Map<String, Any>?> = MutableLiveData<Map<String, Any>?>()
     private var mListConsume:LiveData<Map<String, Any>?> = MutableLiveData<Map<String, Any>?>()
-    private var synchronizeIsFinished = MutableLiveData<Boolean>()
+    private var synchronizeIsFinishedConsume = MutableLiveData<Boolean>()
+    private var synchronizeIsFinishedStation = MutableLiveData<Boolean>()
+    private var synchronizeErrorConsume = MutableLiveData<Boolean>()
+    private var synchronizeErrorStation = MutableLiveData<Boolean>()
+    private var userId:Long? = null
 
-    private lateinit var temListStation:GasStationToConsume
-    private lateinit var temListConsume:ConsumeToUser
     private val gson = Gson()
 
     init {
@@ -42,8 +42,6 @@ class MainActivityViewModel(application: Application): AndroidViewModel(applicat
         mDbRepositoryUser = UserRepository(daoUser)
         mDbRepositoryStation = StationRepository(daoStation)
         mFirebaseRepository = FireBaseRepository(firebase)
-
-        checkConnection()
     }
 
     fun createUser(name: String)= viewModelScope.launch(Dispatchers.IO) {
@@ -54,8 +52,6 @@ class MainActivityViewModel(application: Application): AndroidViewModel(applicat
         mListConsume = mFirebaseRepository.getDataConsume()
         mListStations = mFirebaseRepository.getDataStation()
 
-        mFirebaseRepository.getStoredData()
-
         mListStations.observeForever {
             convertStationAndSaveToDB(it)
         }
@@ -64,28 +60,39 @@ class MainActivityViewModel(application: Application): AndroidViewModel(applicat
         }
     }
 
+    fun setUserId(id:Long){
+        this.userId = id
+    }
+
     fun isCreatedUser():LiveData<Long>{
         return mDbRepositoryUser.getNewCreatedUser()
     }
 
-    fun synchronizeIsFinished():LiveData<Boolean>{
-        return synchronizeIsFinished
+    fun synchronizeIsErrorConsume():LiveData<Boolean>{
+        return synchronizeErrorConsume
     }
 
-    private fun  checkConnection(){
+    fun synchronizeIsErrorStation():LiveData<Boolean>{
+        return synchronizeErrorStation
+    }
+
+    fun  checkConnection(){
+        if (synchronizeIsFinishedStation.value == true && synchronizeIsFinishedStation.value == true){
+            return
+        }
+
         connectionStatus = NetworkUtil.isOnline()
         if (connectionStatus!=null){
-            if (!connectionStatus!!){
-                synchronizeIsFinished.postValue(true)
-            }else{
-                getAllStationFromFirebase()
+            if (connectionStatus!!){
+                if (userId!=null){
+                    mFirebaseRepository.getStoredData(userId!!)
+                    getAllStationFromFirebase()
+                }
             }
-        }else{
-            synchronizeIsFinished.postValue(true)
         }
     }
 
-    private fun convertConsumeAndSaveToDB(value: Map<String, Any>?){
+    private fun convertConsumeAndSaveToDB(value: Map<String, Any>?)= viewModelScope.launch(Dispatchers.IO) {
         if (value!=null){
             try {
                 val jsonFromFirebase = gson.toJson(value)
@@ -94,18 +101,24 @@ class MainActivityViewModel(application: Application): AndroidViewModel(applicat
 
                 if (sizeInDb!=null){
                     if (sizeInDb == 0){
-                        mConsume.consume?.let { mDbRepositoryStation.insertAllConsume(it) }
+                        val done = mConsume.consume?.let { mDbRepositoryStation.insertAllConsume(it) }
+                        if (done!=null && done.isNotEmpty()){
+                            synchronizeIsFinishedConsume.postValue(true)
+                        }else{
+                            synchronizeErrorConsume.postValue(true)
+                        }
+                    }else{
+                        synchronizeIsFinishedConsume.postValue(true)
                     }
                 }
-
-                println()
             }catch (e: Exception){
+                synchronizeErrorConsume.postValue(true)
                 e.printStackTrace()
             }
         }
     }
 
-    private fun convertStationAndSaveToDB(value: Map<String, Any>?){
+    private fun convertStationAndSaveToDB(value: Map<String, Any>?)= viewModelScope.launch(Dispatchers.IO) {
         if (value!=null){
             try {
                 val p = gson.toJson(value)
@@ -114,10 +127,18 @@ class MainActivityViewModel(application: Application): AndroidViewModel(applicat
 
                 if (sizeInDb!=null){
                     if (sizeInDb == 0){
-                        mStation.station_list?.let { mDbRepositoryStation.insertAllStation(it) }
+                        val done = mStation.station_list?.let { mDbRepositoryStation.insertAllStation(it) }
+                        if (done!=null && done.isNotEmpty()){
+                            synchronizeIsFinishedStation.postValue(true)
+                        }else{
+                            synchronizeErrorStation.postValue(true)
+                        }
+                    }else{
+                        synchronizeIsFinishedStation.postValue(true)
                     }
                 }
             }catch (e: Exception){
+                synchronizeErrorStation.postValue(true)
                 e.printStackTrace()
             }
         }

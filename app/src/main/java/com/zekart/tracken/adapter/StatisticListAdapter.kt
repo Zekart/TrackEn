@@ -56,8 +56,10 @@ class StatisticListAdapter(context: Context): RecyclerView.Adapter<StatisticList
      * @see StatisticResponse
      **/
 
-    internal fun setConsume(consumeStatisticResponse:List<StatisticResponse>){
-        this.mStatisticResponseList = consumeStatisticResponse
+    internal fun setConsume(consumeStatisticResponse:List<StatisticResponse>?){
+        if (consumeStatisticResponse!=null){
+            this.mStatisticResponseList = consumeStatisticResponse
+        }
         notifyDataSetChanged()
     }
 }

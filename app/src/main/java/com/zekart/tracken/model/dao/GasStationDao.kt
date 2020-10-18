@@ -60,11 +60,11 @@ interface GasStationDao {
 
         @Transaction
         @Insert
-        fun insertAllGasStation(list:List<GasStation>)
+        fun insertAllGasStation(list:List<GasStation>):LongArray?
 
         @Transaction
         @Insert
-        fun insertAllConsume(list:List<Consume>)
+        fun insertAllConsume(list:List<Consume>):LongArray?
         /**
          * Take all consume which allow to current user
          **/
