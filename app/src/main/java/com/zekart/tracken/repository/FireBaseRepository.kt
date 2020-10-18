@@ -11,7 +11,6 @@ class FireBaseRepository(private val firebase: FirebaseFirestore) {
     private var mListConsume = MutableLiveData<Map<String, Any>?>()
 
     fun getStoredData(userId:Long){
-
         try {
             firebase.collection("stations").document(userId.toString())
                 .get()
@@ -31,7 +30,6 @@ class FireBaseRepository(private val firebase: FirebaseFirestore) {
                 .addOnFailureListener { _ ->
                     mListConsume.postValue(null)
                 }
-
         }catch (n: NullPointerException){
             n.printStackTrace()
         }catch (io: IOException){
